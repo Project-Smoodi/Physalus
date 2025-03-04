@@ -1,6 +1,9 @@
 package org.smoodi.physalus.engine;
 
-public interface Engine {
+import org.smoodi.physalus.status.Stated;
+
+public interface Engine
+        extends Stated {
 
     void startEngine();
 
