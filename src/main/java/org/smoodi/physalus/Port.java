@@ -27,6 +27,13 @@ public class Port implements Tagged {
 
     public Port(
             int portNumber,
+            String tag
+    ) {
+        this(portNumber, Collections.singletonList(tag));
+    }
+
+    public Port(
+            int portNumber,
             List<String> tag
     ) {
         if (portNumber < 0 || portNumber > 65535) {
@@ -46,5 +53,16 @@ public class Port implements Tagged {
         } else {
             return Collections.emptyList();
         }
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Port port) {
+            return portNumber == port.portNumber;
+        }
+        if (obj instanceof SocketListeningPort port) {
+            return portNumber == port.getPortNumber();
+        }
+        return false;
     }
 }
