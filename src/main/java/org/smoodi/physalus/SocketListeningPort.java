@@ -2,6 +2,7 @@ package org.smoodi.physalus;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.List;
 
 
@@ -16,7 +17,7 @@ public class SocketListeningPort implements Tagged {
         try {
             this.serverSocket = new ServerSocket(port.getPortNumber());
         } catch (IOException e) {
-            throw new IllegalArgumentException("Could not listen on port: " + port.getPortNumber());
+            throw new IllegalArgumentException("Could not listen on port: " + port.getPortNumber(), e);
         }
     }
 
@@ -35,6 +36,14 @@ public class SocketListeningPort implements Tagged {
 
     public boolean isBound() {
         return serverSocket.isBound();
+    }
+
+    public Socket accept() {
+        try {
+            return serverSocket.accept();
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Could not accept connection: " + e.getMessage());
+        }
     }
 
     @Override
