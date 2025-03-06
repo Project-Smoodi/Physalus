@@ -1,15 +1,20 @@
 package org.smoodi.physalus;
 
+import lombok.extern.slf4j.Slf4j;
+import org.smoodi.annotation.NotNull;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.List;
 
 
+@Slf4j
 public class SocketListeningPort implements Tagged {
 
     private final Port value;
 
+    @NotNull
     private final ServerSocket serverSocket;
 
     public SocketListeningPort(Port port) {
@@ -43,6 +48,19 @@ public class SocketListeningPort implements Tagged {
             return serverSocket.accept();
         } catch (IOException e) {
             throw new IllegalArgumentException("Could not accept connection: " + e.getMessage());
+        }
+    }
+
+    public void close() {
+        if (serverSocket.isClosed()) {
+            return;
+        }
+
+        try {
+            serverSocket.close();
+        } catch (IOException e) {
+            // TODO("더 찾아보고 추가적인 처리 코드 작성할 것")
+            log.error(e.getMessage(), e);
         }
     }
 
