@@ -3,8 +3,12 @@ package org.smoodi.physalus.engine;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.smoodi.physalus.Adapter;
-import org.smoodi.physalus.Port;
+import org.smoodi.physalus.engine.adapter.Adapter;
+import org.smoodi.physalus.engine.port.Port;
+import org.smoodi.physalus.engine.adapter.Adapted;
+import org.smoodi.physalus.engine.adapter.AdapterManager;
+import org.smoodi.physalus.engine.port.Ported;
+import org.smoodi.physalus.engine.port.ServerRuntime;
 import org.smoodi.physalus.exchange.Request;
 
 import java.net.Socket;

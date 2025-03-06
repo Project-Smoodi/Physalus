@@ -1,6 +1,4 @@
-package org.smoodi.physalus.engine;
-
-import org.smoodi.physalus.Adapter;
+package org.smoodi.physalus.engine.adapter;
 
 public interface Adapted {
 

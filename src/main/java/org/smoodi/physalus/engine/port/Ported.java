@@ -1,6 +1,4 @@
-package org.smoodi.physalus.engine;
-
-import org.smoodi.physalus.Port;
+package org.smoodi.physalus.engine.port;
 
 public interface Ported {
 

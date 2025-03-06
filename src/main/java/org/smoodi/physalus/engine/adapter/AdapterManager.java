@@ -1,6 +1,4 @@
-package org.smoodi.physalus.engine;
-
-import org.smoodi.physalus.Adapter;
+package org.smoodi.physalus.engine.adapter;
 
 import java.util.HashSet;
 import java.util.Set;
