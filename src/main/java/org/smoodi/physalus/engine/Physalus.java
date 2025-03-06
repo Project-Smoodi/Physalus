@@ -1,6 +1,8 @@
 package org.smoodi.physalus.engine;
 
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.smoodi.physalus.Adapter;
 import org.smoodi.physalus.Port;
 import org.smoodi.physalus.exchange.Request;
@@ -8,6 +10,7 @@ import org.smoodi.physalus.exchange.Request;
 import java.net.Socket;
 import java.util.List;
 
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Physalus
         implements Engine, ListeningEngine, Adapted, Ported {
 
@@ -20,6 +23,14 @@ public class Physalus
 
     private final AdapterManager adapterModule = new AdapterManager() {
     };
+
+    public static Engine instance() {
+        if (engine == null) {
+            engine = new Physalus();
+        }
+
+        return engine;
+    }
 
     @Override
     public void startEngine() {
