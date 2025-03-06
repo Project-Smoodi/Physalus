@@ -2,9 +2,19 @@ package org.smoodi.physalus.status;
 
 public interface Stated {
 
-    Value state = Value.NONE;
+    State getState();
 
-    enum Value {
+    default boolean is(State value, State... value2) {
+        for (State state : value2) {
+            if (state.equals(value)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    enum State {
 
         // Lifecycle
         NONE,
@@ -13,9 +23,11 @@ public interface Stated {
         STARTING,
         RUNNING,
         STOPPING,
+        STOPPED,
         DEAD,
         WAITING,
         SLEEPING,
+        ERRORED,
 
         // Async
         SYNCHRONIZING,

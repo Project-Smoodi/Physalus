@@ -1,5 +1,6 @@
 package org.smoodi.physalus.engine;
 
+import lombok.Getter;
 import org.smoodi.physalus.Adapter;
 import org.smoodi.physalus.Port;
 import org.smoodi.physalus.exchange.Request;
@@ -9,6 +10,9 @@ import java.util.List;
 
 public class Physalus
         implements Engine, ListeningEngine, Adapted, Ported {
+
+    @Getter
+    private State state;
 
     private static Physalus engine;
 

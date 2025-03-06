@@ -1,7 +1,7 @@
 package org.smoodi.physalus.engine;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.smoodi.physalus.Port;
 import org.smoodi.physalus.SocketListeningPort;
 import org.smoodi.physalus.status.Stated;
@@ -10,9 +10,15 @@ import java.net.Socket;
 import java.util.HashSet;
 import java.util.Set;
 
+@Slf4j
 public class HttpServer implements Ported, Stated {
 
-    private static final Logger log = LoggerFactory.getLogger(HttpServer.class);
+    /**
+     * <p>{@link State#NONE}, {@link State#SETTING}, {@link State#STARTING}, {@link State#RUNNING}, {@link State#STOPPING}, {@link State#STOPPED}</p>
+     */
+    @Getter
+    private State state = State.NONE;
+
     private final Set<SocketListeningPort> ports = new HashSet<>();
 
     private ListeningEngine engine;
