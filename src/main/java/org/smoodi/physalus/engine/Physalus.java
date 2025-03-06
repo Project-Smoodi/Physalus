@@ -19,7 +19,7 @@ public class Physalus
 
     private static Physalus engine;
 
-    private final HttpServer httpServer = new HttpServer();
+    private final ServerRuntime serverRuntime = new ServerRuntime();
 
     private final AdapterManager adapterModule = new AdapterManager() {
     };
@@ -34,7 +34,7 @@ public class Physalus
 
     @Override
     public void startEngine() {
-        httpServer.startServer();
+        serverRuntime.startServer();
     }
 
     @Override
@@ -68,26 +68,26 @@ public class Physalus
 
     @Override
     public boolean addPort(Port port) {
-        return httpServer.addPort(port);
+        return serverRuntime.addPort(port);
     }
 
     @Override
     public boolean addPort(int port) {
-        return httpServer.addPort(port);
+        return serverRuntime.addPort(port);
     }
 
     @Override
     public boolean removePort(Port port) {
-        return httpServer.removePort(port);
+        return serverRuntime.removePort(port);
     }
 
     @Override
     public boolean removePort(int port) {
-        return httpServer.removePort(port);
+        return serverRuntime.removePort(port);
     }
 
     @Override
     public boolean removePort(String tag) {
-        return httpServer.removePort(tag);
+        return serverRuntime.removePort(tag);
     }
 }

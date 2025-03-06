@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Set;
 
 @Slf4j
-public class HttpServer implements Ported, Stated {
+public class ServerRuntime implements Ported, Stated {
 
     /**
      * <p>{@link State#NONE}, {@link State#SETTING}, {@link State#STARTING}, {@link State#RUNNING}, {@link State#STOPPING}, {@link State#STOPPED}</p>
