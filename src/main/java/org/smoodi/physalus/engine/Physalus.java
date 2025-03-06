@@ -23,7 +23,7 @@ public class Physalus
 
     @Override
     public void startEngine() {
-
+        httpServer.startServer();
     }
 
     @Override
