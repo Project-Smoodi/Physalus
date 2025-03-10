@@ -1,7 +1,10 @@
 package org.smoodi.physalus.exchange;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.smoodi.annotation.NotNull;
 import org.smoodi.annotation.Nullable;
 import org.smoodi.annotation.array.UnmodifiableArray;
 import org.smoodi.physalus.engine.port.SocketWrapper;
@@ -17,6 +20,8 @@ import java.util.Objects;
 @Getter
 public final class SocketBasedHttpExchange
         implements HttpExchange {
+
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     private final SocketWrapper socket;
 
@@ -110,11 +115,14 @@ public final class SocketBasedHttpExchange
         }
 
         @Override
-        public void json(Object valueObject) {
+        public void json(@NotNull Object valueObject) {
             checkFrozen();
 
-            this.content = Objects.nonNull(valueObject);
-            this.headers.set(HttpHeaderNames.CONTENT_TYPE, ContentType.APPLICATION_JSON.toString());
+            if (valueObject == null) {
+                throw new IllegalArgumentException("Argument is null.");
+            }
+            this.content = valueObject;
+            this.headers.set(HttpHeaderNames.CONTENT_TYPE, ContentType.APPLICATION_JSON.value);
         }
 
         @Override
@@ -123,14 +131,27 @@ public final class SocketBasedHttpExchange
                 return;
             this.finish = true;
 
+            finishContent();
             finishHeader();
+        }
+
+        private void finishContent() {
+            if (this.content == null) return;
+
+            if (Objects.equals(this.headers.contentType(), ContentType.APPLICATION_JSON.value)) {
+                try {
+                    this.content = objectMapper.writeValueAsString(this.content);
+                } catch (JsonProcessingException e) {
+                    throw new IllegalArgumentException("Cannot serialize content to JSON; Content's classname: " + this.content.getClass().getSimpleName(), e);
+                }
+            }
         }
 
         private void finishHeader() {
             this.headers.set(HttpHeaderNames.DATE.name, OffsetDateTime.now().format(DateTimeFormatter.RFC_1123_DATE_TIME));
 
             if (this.content != null) {
-                this.headers.set(HttpHeaderNames.CONTENT_LENGTH, String.valueOf(this.content.toString().length()));
+                this.headers.set(HttpHeaderNames.CONTENT_LENGTH, "" + this.content.toString().length());
 
                 if (this.headers.contentType() == null) {
                     if (this.content instanceof String) {
