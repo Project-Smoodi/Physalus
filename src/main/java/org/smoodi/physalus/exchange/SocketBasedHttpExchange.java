@@ -148,6 +148,9 @@ public final class SocketBasedHttpExchange
         }
 
         private void finishHeader() {
+            // TODO("Keep-Alive 구현 후 제거")
+            this.headers.set(HttpHeaderNames.CONNECTION, "close");
+
             this.headers.set(HttpHeaderNames.DATE.name, OffsetDateTime.now().format(DateTimeFormatter.RFC_1123_DATE_TIME));
 
             if (this.content != null) {
