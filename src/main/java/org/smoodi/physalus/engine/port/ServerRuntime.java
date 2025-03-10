@@ -5,10 +5,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.smoodi.physalus.engine.ListeningEngine;
 import org.smoodi.physalus.status.Stated;
 
-import java.net.Socket;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ThreadFactory;
 
 @Slf4j
 public class ServerRuntime implements Ported, Stated {
@@ -21,9 +23,15 @@ public class ServerRuntime implements Ported, Stated {
 
     private final Set<SocketListeningPort> ports = new HashSet<>();
 
-    private ListeningEngine engine;
+    private final ListeningEngine engine;
 
-    private List<Thread> listeningThreads;
+    private final ThreadFactory factory = Thread.ofVirtual().factory();
+
+    private final List<Thread> listeningThreads = new ArrayList<>();
+
+    public ServerRuntime(ListeningEngine engine) {
+        this.engine = engine;
+    }
 
     public synchronized void startServer() {
         checkSetup();
@@ -33,6 +41,8 @@ public class ServerRuntime implements Ported, Stated {
         doListening();
 
         this.state = State.RUNNING;
+
+        log.info("Physalus Server started. ports: {}", ports.stream().map(SocketListeningPort::getPortNumber).toList());
     }
 
     private void checkSetup() {
@@ -58,22 +68,38 @@ public class ServerRuntime implements Ported, Stated {
     }
 
     private void doListening() {
-        final var factory = Thread.ofVirtual().factory();
-
-        this.ports.forEach(it -> {
+        ports.forEach(port -> {
             final Thread thread = factory.newThread(() -> {
-                Socket socket;
+                log.warn("Listening on port {}", port.getPortNumber());
+
                 while (true) {
-                    socket = it.accept();
+                    SocketWrapper socket = new SocketWrapper(port.accept());
+
+                    log.debug("Received connection from port {}. Socket@{}", port.getPortNumber(), socket.hashCode());
+
+                    try {
+                        socket.getInput().mark(5);
+                        if (socket.getInput().read() == -1) {
+                            socket.get().close();
+                            log.debug("Not a http message received. Socket@{}", socket.hashCode());
+                            continue;
+                        } else {
+                            socket.getInput().reset();
+                        }
+                    } catch (IOException e) {
+                        log.error(e.getMessage(), e);
+                    }
 
                     if (Thread.interrupted()) {
                         return;
                     }
 
-                    engine.doService(socket, it.getTag());
+                    log.debug("The request passed to engine. Socket@{}", socket.hashCode());
+                    engine.doService(socket, port.getTag());
                 }
             });
-            thread.setName("port-listening-" + it.getPortNumber());
+            thread.setName("port-listening-" + port.getPortNumber());
+            thread.start();
             listeningThreads.add(thread);
         });
     }

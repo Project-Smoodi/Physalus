@@ -3,30 +3,45 @@ package org.smoodi.physalus.engine;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.smoodi.physalus.engine.adapter.Adapter;
-import org.smoodi.physalus.engine.port.Port;
+import lombok.extern.slf4j.Slf4j;
 import org.smoodi.physalus.engine.adapter.Adapted;
 import org.smoodi.physalus.engine.adapter.AdapterManager;
 import org.smoodi.physalus.engine.port.Ported;
 import org.smoodi.physalus.engine.port.ServerRuntime;
+import org.smoodi.physalus.engine.port.SocketWrapper;
 import org.smoodi.physalus.exchange.Request;
+import org.smoodi.physalus.exchange.SocketBasedHttpExchange;
+import org.smoodi.physalus.http.ResponseSender;
 
-import java.net.Socket;
+import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.concurrent.ThreadFactory;
 
+@Slf4j
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Physalus
-        implements Engine, ListeningEngine, Adapted, Ported {
-
-    @Getter
-    private State state;
+        extends BaseEngine {
 
     private static Physalus engine;
 
-    private final ServerRuntime serverRuntime = new ServerRuntime();
+    @Getter
+    private final ServerRuntime serverRuntime = new ServerRuntime(this);
 
-    private final AdapterManager adapterModule = new AdapterManager() {
-    };
+    @Getter
+    private final AdapterManager adapterManager = new AdapterManager();
+
+    private final ThreadFactory threadFactory = Thread.ofVirtual().name("request-resolver-", 0).factory();
+
+    @Override
+    protected Ported ported() {
+        return serverRuntime;
+    }
+
+    @Override
+    protected Adapted adapted() {
+        return adapterManager;
+    }
 
     public static Engine instance() {
         if (engine == null) {
@@ -39,59 +54,46 @@ public class Physalus
     @Override
     public void startEngine() {
         serverRuntime.startServer();
+
+        log.info("Physalus, The engine started. at: {}", LocalDateTime.now());
     }
 
     @Override
     public void stopEngine() {
+        serverRuntime.stopServer();
 
+        log.info("Physalus, The engine stopped. at: {}", LocalDateTime.now());
     }
 
     @Override
-    public void doService(Socket socket, List<String> tags) {
+    public void doService(SocketWrapper socket, List<String> tags) {
+        threadFactory.newThread(() -> {
+            try {
+                // TODO("요청에 대한 처리")
+                new SocketBasedHttpExchange(socket);
 
+                log.debug("Application processing finished. Socket@{}", socket.hashCode());
+            } catch (Exception e) {
+                log.error(e.getMessage(), e);
+            } finally {
+                try {
+                    ResponseSender.sendOK(socket);
+                    log.debug("Send the response at: {}. Socket@{}", LocalDateTime.now(), socket.hashCode());
+                } catch (IOException e) {
+                    log.error(e.getMessage(), e);
+                } finally {
+                    try {
+                        socket.get().close();
+                        log.debug("Socket successfully closed. Socket@{}", socket.hashCode());
+                    } catch (IOException e) {
+                        log.error(e.getMessage(), e);
+                    }
+                }
+            }
+        }).start();
     }
 
     public void mainController(Request request, List<String> tags) {
 
-    }
-
-    @Override
-    public boolean addAdapter(Adapter adapter) {
-        return adapterModule.addAdapter(adapter);
-    }
-
-    @Override
-    public boolean removeAdapter(Adapter adapter) {
-        return adapterModule.removeAdapter(adapter);
-    }
-
-    @Override
-    public boolean removeAdapter(String tag) {
-        return adapterModule.removeAdapter(tag);
-    }
-
-    @Override
-    public boolean addPort(Port port) {
-        return serverRuntime.addPort(port);
-    }
-
-    @Override
-    public boolean addPort(int port) {
-        return serverRuntime.addPort(port);
-    }
-
-    @Override
-    public boolean removePort(Port port) {
-        return serverRuntime.removePort(port);
-    }
-
-    @Override
-    public boolean removePort(int port) {
-        return serverRuntime.removePort(port);
-    }
-
-    @Override
-    public boolean removePort(String tag) {
-        return serverRuntime.removePort(tag);
     }
 }
