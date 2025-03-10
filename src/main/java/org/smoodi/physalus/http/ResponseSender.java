@@ -27,6 +27,7 @@ public final class ResponseSender {
             writer.write(entry.getKey() + ": " + entry.getValue() + "\r\n");
         }
         if (response.getContent() != null) {
+            writer.write("\r\n");
             writer.write(response.getContent().toString() + "\r\n");
         }
 
