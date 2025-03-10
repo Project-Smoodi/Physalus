@@ -65,5 +65,7 @@ public interface HttpResponse extends Response {
 
     void setStatusCode(@NotNull HttpStatus status);
 
+    // TODO("내가 만든 Cookie")
+
     void finish();
 }
