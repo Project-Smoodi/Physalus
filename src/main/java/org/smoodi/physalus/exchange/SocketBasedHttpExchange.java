@@ -38,6 +38,9 @@ public final class SocketBasedHttpExchange
         this.response = new Response(this.request.getAddress());
     }
 
+    public static HttpExchange of(SocketWrapper socket) throws IOException {
+        return new SocketBasedHttpExchange(socket);
+    }
 
     private void checkSocketAvailable(Socket socket) {
         if (socket.isClosed()) {
