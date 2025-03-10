@@ -5,6 +5,8 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.smoodi.physalus.engine.port.SocketWrapper;
 import org.smoodi.physalus.exchange.HttpResponse;
+import org.smoodi.physalus.exchange.HttpStatus;
+import org.smoodi.physalus.exchange.SocketBasedHttpExchange;
 
 import java.io.IOException;
 import java.util.Map;
@@ -24,32 +26,44 @@ public final class ResponseSender {
             String value = entry.getValue();
             writer.write(key + ": " + value + "\r\n");
         }
-        writer.write(response.getContent().toString() + "\r\n");
+        if (response.getContent() != null) {
+            writer.write(response.getContent().toString() + "\r\n");
+        }
 
         writer.flush();
         writer.close();
     }
 
     public static void sendOK(final SocketWrapper socket) throws IOException {
-        var writer = socket.getOutput();
+        send(socket, createStatusResponse(socket, HttpStatus.OK));
+    }
 
-        writer.write("HTTP/1.1 200 OK\r\n");
-        writer.write("\r\n");
-        writer.flush();
-        writer.close();
+    public static void sendCreated(final SocketWrapper socket) throws IOException {
+        send(socket, createStatusResponse(socket, HttpStatus.CREATED));
+    }
+
+    public static void sendNoContent(final SocketWrapper socket) throws IOException {
+        send(socket, createStatusResponse(socket, HttpStatus.NO_CONTENT));
     }
 
     public static void sendBadRequest(final SocketWrapper socket) throws IOException {
-        var writer = socket.getOutput();
+        send(socket, createStatusResponse(socket, HttpStatus.BAD_REQUEST));
+    }
 
-        writer.write("HTTP/1.1 400 Bad Request\r\n");
-        writer.newLine();
-        writer.write("Content-Type: text/plain\r\n");
-        writer.write("Connection: close\r\n");
-        writer.write("Smoodi: physalus\r\n");
-        writer.newLine();
-        writer.write("\r\n");
-        writer.flush();
-        writer.close();
+    public static void sendUnauthorized(final SocketWrapper socket) throws IOException {
+        send(socket, createStatusResponse(socket, HttpStatus.UNAUTHORIZED));
+    }
+
+    public static void sendNotFound(final SocketWrapper socket) throws IOException {
+        send(socket, createStatusResponse(socket, HttpStatus.NOT_FOUND));
+    }
+
+    private static HttpResponse createStatusResponse(final SocketWrapper socket, final HttpStatus status) throws IOException {
+        final HttpResponse response = new SocketBasedHttpExchange.Response(socket.get().getRemoteSocketAddress().toString());
+
+        response.setStatusCode(status);
+        response.setContent(null);
+
+        return response;
     }
 }

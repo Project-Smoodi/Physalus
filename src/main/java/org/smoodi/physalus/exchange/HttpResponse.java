@@ -43,6 +43,8 @@ public interface HttpResponse extends Response {
     @Override
     Object getContent();
 
+    void json(@NotNull Object valueObject);
+
     /**
      * <p>Return headers of response.</p>
      *

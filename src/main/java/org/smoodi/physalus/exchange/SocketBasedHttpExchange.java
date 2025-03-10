@@ -2,7 +2,6 @@ package org.smoodi.physalus.exchange;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 import org.smoodi.annotation.Nullable;
 import org.smoodi.annotation.array.UnmodifiableArray;
 import org.smoodi.physalus.engine.port.SocketWrapper;
@@ -10,7 +9,10 @@ import org.smoodi.physalus.http.RequestParser;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
+import java.util.Objects;
 
 @Getter
 public final class SocketBasedHttpExchange
@@ -80,14 +82,14 @@ public final class SocketBasedHttpExchange
     @Getter
     public static class Response implements HttpResponse {
 
+        private boolean finish = false;
+
         private final String address;
 
-        @Setter
         private HttpStatus statusCode;
 
-        private final HttpHeaders headers = new MapHttpHeaders();
+        private HttpHeaders headers = new MapHttpHeaders();
 
-        @Setter
         private Object content = null;
 
         public Response(String address) {
@@ -95,11 +97,54 @@ public final class SocketBasedHttpExchange
         }
 
         @Override
+        public void setStatusCode(HttpStatus statusCode) {
+            checkFrozen();
+
+            this.statusCode = statusCode;
+        }
+
+        public void setContent(Object content) {
+            checkFrozen();
+
+            this.content = content;
+        }
+
+        @Override
+        public void json(Object valueObject) {
+            checkFrozen();
+
+            this.content = Objects.nonNull(valueObject);
+            this.headers.set(HttpHeaderNames.CONTENT_TYPE, ContentType.APPLICATION_JSON.toString());
+        }
+
+        @Override
         public void finish() {
-            // TODO("content 형식에 따른 Content-Type 헤더 설정")
-            // TODO("Data 헤더 작성")
-            // TODO("Content-Length 설정");
+            if (this.finish)
+                return;
+            this.finish = true;
+
+            finishHeader();
+        }
+
+        private void finishHeader() {
+            this.headers.set(HttpHeaderNames.DATE.name, LocalDateTime.now().format(DateTimeFormatter.RFC_1123_DATE_TIME));
+            this.headers.set(HttpHeaderNames.CONTENT_LENGTH, String.valueOf(this.content.toString().length()));
+
+            if (this.headers.contentType() == null) {
+                if (this.content instanceof String) {
+                    this.headers.set(HttpHeaderNames.CONTENT_TYPE, "text/plain; charset=utf-8");
+                } else {
+                    throw new IllegalArgumentException("Content type not configured.");
+                }
+            }
+
+            this.headers = new UnmodifiableMapHttpHeaders(headers);
+        }
+
+        private void checkFrozen() {
+            if (finish) {
+                throw new UnsupportedOperationException("Cannot modify response, Response is frozen.");
+            }
         }
     }
-
 }
