@@ -22,7 +22,7 @@ public final class SocketBasedHttpExchange
     // TODO("To HttpResponse")
     private final Response response;
 
-    SocketBasedHttpExchange(SocketWrapper socket) throws IOException {
+    public SocketBasedHttpExchange(SocketWrapper socket) throws IOException {
         checkSocketAvailable(socket.get());
         this.socket = socket;
 
