@@ -53,4 +53,17 @@ public interface HttpResponse extends Response {
     @NotNull
     @Override
     HttpHeaders getHeaders();
+
+    /**
+     * Return status code of response.
+     *
+     * @return Status code of response.
+     * @see HttpStatus
+     */
+    @NotNull
+    HttpStatus getStatusCode();
+
+    void setStatusCode(@NotNull HttpStatus status);
+
+    void finish();
 }
