@@ -20,15 +20,17 @@ public final class ResponseSender {
     public static void send(final SocketWrapper socket, final HttpResponse response) throws IOException {
         var writer = socket.getOutput();
 
+        response.finish();
+
         writer.write(PROTOCOL + " " + response.getStatusCode().status + " " + response.getStatusCode().reason + "\r\n");
         for (Map.Entry<String, String> entry : response.getHeaders().toMap().entrySet()) {
-            String key = entry.getKey();
-            String value = entry.getValue();
-            writer.write(key + ": " + value + "\r\n");
+            writer.write(entry.getKey() + ": " + entry.getValue() + "\r\n");
         }
         if (response.getContent() != null) {
             writer.write(response.getContent().toString() + "\r\n");
         }
+
+        writer.write("\r\n");
 
         writer.flush();
         writer.close();

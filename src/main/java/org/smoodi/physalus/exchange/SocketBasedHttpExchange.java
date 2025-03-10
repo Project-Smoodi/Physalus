@@ -9,7 +9,7 @@ import org.smoodi.physalus.http.RequestParser;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.Objects;
@@ -127,14 +127,17 @@ public final class SocketBasedHttpExchange
         }
 
         private void finishHeader() {
-            this.headers.set(HttpHeaderNames.DATE.name, LocalDateTime.now().format(DateTimeFormatter.RFC_1123_DATE_TIME));
-            this.headers.set(HttpHeaderNames.CONTENT_LENGTH, String.valueOf(this.content.toString().length()));
+            this.headers.set(HttpHeaderNames.DATE.name, OffsetDateTime.now().format(DateTimeFormatter.RFC_1123_DATE_TIME));
 
-            if (this.headers.contentType() == null) {
-                if (this.content instanceof String) {
-                    this.headers.set(HttpHeaderNames.CONTENT_TYPE, "text/plain; charset=utf-8");
-                } else {
-                    throw new IllegalArgumentException("Content type not configured.");
+            if (this.content != null) {
+                this.headers.set(HttpHeaderNames.CONTENT_LENGTH, String.valueOf(this.content.toString().length()));
+
+                if (this.headers.contentType() == null) {
+                    if (this.content instanceof String) {
+                        this.headers.set(HttpHeaderNames.CONTENT_TYPE, "text/plain; charset=utf-8");
+                    } else {
+                        throw new IllegalArgumentException("Content type not configured.");
+                    }
                 }
             }
 
