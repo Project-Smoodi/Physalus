@@ -11,7 +11,9 @@ import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
 
-public final class SocketBasedHttpExchange {
+@Getter
+public final class SocketBasedHttpExchange
+        implements HttpExchange {
 
     private final SocketWrapper socket;
 
