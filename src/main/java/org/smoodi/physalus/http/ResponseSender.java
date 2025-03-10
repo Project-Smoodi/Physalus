@@ -61,6 +61,10 @@ public final class ResponseSender {
         send(socket, createStatusResponse(socket, HttpStatus.NOT_FOUND));
     }
 
+    public static void sendInternalServerError(final SocketWrapper socket) throws IOException {
+        send(socket, createStatusResponse(socket, HttpStatus.INTERNAL_SERVER_ERROR));
+    }
+
     private static HttpResponse createStatusResponse(final SocketWrapper socket, final HttpStatus status) throws IOException {
         final HttpResponse response = new SocketBasedHttpExchange.Response(socket.get().getRemoteSocketAddress().toString());
 
