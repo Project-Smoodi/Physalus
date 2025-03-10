@@ -26,7 +26,7 @@ public final class SocketBasedHttpExchange
         checkSocketAvailable(socket.get());
         this.socket = socket;
 
-        this.request = RequestParser.of(socket);
+        this.request = RequestParser.parse(socket);
         this.response = new Response();
     }
 
@@ -44,6 +44,8 @@ public final class SocketBasedHttpExchange
     @Getter
     @AllArgsConstructor
     public static class Request implements HttpRequest {
+
+        private final String address;
 
         private final String url;
 
@@ -67,11 +69,6 @@ public final class SocketBasedHttpExchange
 
         @Nullable
         private final Object content;
-
-        @Override
-        public String getAddress() {
-            return "";
-        }
 
         @Override
         public boolean isSecureProtocol() {

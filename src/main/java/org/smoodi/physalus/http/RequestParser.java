@@ -14,7 +14,7 @@ import java.util.Map;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class RequestParser {
 
-    public static HttpRequest of(SocketWrapper socket) throws IOException {
+    public static HttpRequest parse(SocketWrapper socket) throws IOException {
         RequestTemp temp = new RequestTemp();
         var reader = socket.getInput();
 
@@ -130,7 +130,7 @@ public final class RequestParser {
         }
 
         public HttpRequest toAvailable() {
-            return new SocketBasedHttpExchange.Request(url, uri, host, path, protocol, method, port, params, headers, content);
+            return new SocketBasedHttpExchange.Request(address, url, uri, host, path, protocol, method, port, params, headers, content);
         }
     }
 }

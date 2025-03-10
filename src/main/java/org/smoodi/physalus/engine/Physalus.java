@@ -10,7 +10,7 @@ import org.smoodi.physalus.engine.port.Ported;
 import org.smoodi.physalus.engine.port.ServerRuntime;
 import org.smoodi.physalus.engine.port.SocketWrapper;
 import org.smoodi.physalus.exchange.Request;
-import org.smoodi.physalus.exchange.SocketBasedHttpExchange;
+import org.smoodi.physalus.http.RequestParser;
 import org.smoodi.physalus.http.ResponseSender;
 
 import java.io.IOException;
@@ -70,7 +70,7 @@ public class Physalus
         threadFactory.newThread(() -> {
             try {
                 // TODO("요청에 대한 처리")
-                new SocketBasedHttpExchange(socket);
+                RequestParser.parse(socket);
 
                 log.debug("Application processing finished. Socket@{}", socket.hashCode());
             } catch (Exception e) {
