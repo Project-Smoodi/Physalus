@@ -73,6 +73,12 @@ public class MapHttpHeaders
 
     @Nullable
     @Override
+    public String contentLength() {
+        return get(HttpHeaderNames.CONTENT_LENGTH);
+    }
+
+    @Nullable
+    @Override
     public String contentLanguage() {
         return get(HttpHeaderNames.CONTENT_LANGUAGE);
     }

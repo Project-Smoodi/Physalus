@@ -27,6 +27,9 @@ public interface HttpHeaders extends Headers {
     String contentEncoding();
 
     @Nullable
+    String contentLength();
+
+    @Nullable
     String contentLanguage();
 
     @Nullable

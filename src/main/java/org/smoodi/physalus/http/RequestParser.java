@@ -77,8 +77,8 @@ public final class RequestParser {
     }
 
     private static void body(BufferedReader reader, RequestTemp temp) throws IOException { // Body
-        if (temp.headers.get(HttpHeaderNames.CONTENT_LENGTH) == null) {
-            int contentLength = Integer.parseInt(temp.headers.get(HttpHeaderNames.CONTENT_LENGTH));
+        if (temp.headers.contentLength() == null) {
+            int contentLength = Integer.parseInt(temp.headers.contentLength());
             char[] bodyBuffer = new char[contentLength];
             int bytesRead = reader.read(bodyBuffer, 0, contentLength);
 
