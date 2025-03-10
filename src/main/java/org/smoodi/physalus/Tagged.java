@@ -17,6 +17,6 @@ public interface Tagged {
         TEST("Test"),
         ;
 
-        final String name;
+        public final String value;
     }
 }
