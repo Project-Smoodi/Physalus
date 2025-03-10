@@ -2,6 +2,7 @@ package org.smoodi.physalus.exchange;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 import org.smoodi.annotation.Nullable;
 import org.smoodi.annotation.array.UnmodifiableArray;
 import org.smoodi.physalus.engine.port.SocketWrapper;
@@ -20,14 +21,14 @@ public final class SocketBasedHttpExchange
     private final HttpRequest request;
 
     // TODO("To HttpResponse")
-    private final Response response;
+    private final HttpResponse response;
 
     public SocketBasedHttpExchange(SocketWrapper socket) throws IOException {
         checkSocketAvailable(socket.get());
         this.socket = socket;
 
         this.request = RequestParser.parse(socket);
-        this.response = new Response();
+        this.response = new Response(this.request.getAddress());
     }
 
 
@@ -76,7 +77,29 @@ public final class SocketBasedHttpExchange
         }
     }
 
-    public static class Response {
+    @Getter
+    public static class Response implements HttpResponse {
+
+        private final String address;
+
+        @Setter
+        private HttpStatus statusCode;
+
+        private final HttpHeaders headers = new MapHttpHeaders();
+
+        @Setter
+        private Object content = null;
+
+        public Response(String address) {
+            this.address = address;
+        }
+
+        @Override
+        public void finish() {
+            // TODO("content 형식에 따른 Content-Type 헤더 설정")
+            // TODO("Data 헤더 작성")
+            // TODO("Content-Length 설정");
+        }
     }
 
 }

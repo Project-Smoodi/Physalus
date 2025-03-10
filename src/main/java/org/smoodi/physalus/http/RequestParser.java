@@ -18,6 +18,8 @@ public final class RequestParser {
         RequestTemp temp = new RequestTemp();
         var reader = socket.getInput();
 
+        temp.address = socket.get().getRemoteSocketAddress().toString();
+
         major(reader, temp);
 
         headers(reader, temp);
