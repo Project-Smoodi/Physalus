@@ -2,10 +2,12 @@ package org.smoodi.physalus.engine.port;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.smoodi.physalus.Tagged;
 import org.smoodi.physalus.engine.ListeningEngine;
 import org.smoodi.physalus.status.Stated;
 
 import java.io.IOException;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -73,35 +75,47 @@ public class ServerRuntime implements Ported, Stated {
                 log.warn("Listening on port {}", port.getPortNumber());
 
                 while (true) {
-                    SocketWrapper socket = new SocketWrapper(port.accept());
-
-                    log.debug("Received connection from port {}. Socket@{}", port.getPortNumber(), socket.hashCode());
-
-                    try {
-                        socket.getInput().mark(5);
-                        if (socket.getInput().read() == -1) {
-                            socket.get().close();
-                            log.debug("Not a http message received. Socket@{}", socket.hashCode());
-                            continue;
-                        } else {
-                            socket.getInput().reset();
-                        }
-                    } catch (IOException e) {
-                        log.error(e.getMessage(), e);
-                    }
-
                     if (Thread.interrupted()) {
                         return;
                     }
 
-                    log.debug("The request passed to engine. Socket@{}", socket.hashCode());
-                    engine.doService(socket, port.getTag());
+                    Socket socket = port.accept();
+
+                    if (port.getTag().contains(Tagged.StandardTags.HTTP.value) || port.getTag().contains(Tagged.StandardTags.HTTPS.value)) {
+                        resolveHttpRequest(socket, new Port(port.getPortNumber(), port.getTag()));
+                    }
+
+                    if (port.getTag().contains(Tagged.StandardTags.TCP.value)) {
+                        // TODO("TCP Request")
+                    }
                 }
             });
             thread.setName("port-listening-" + port.getPortNumber());
             thread.start();
             listeningThreads.add(thread);
         });
+    }
+
+    private void resolveHttpRequest(Socket arg, Port port) {
+        SocketWrapper socket = new SocketWrapper(arg);
+
+        log.debug("Received connection from port {}. Socket@{}", port.getPortNumber(), socket.hashCode());
+
+        try {
+            socket.getInput().mark(5);
+            if (socket.getInput().read() == -1) {
+                socket.get().close();
+                log.debug("Not a http message received on HTTP Server port({}). Socket@{}", port.getPortNumber(), socket.hashCode());
+                return;
+            } else {
+                socket.getInput().reset();
+            }
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+        }
+
+        log.debug("The request passed to engine. Socket@{}", socket.hashCode());
+        engine.doService(socket, port.getTag());
     }
 
     /**
