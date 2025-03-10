@@ -4,20 +4,30 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.smoodi.physalus.engine.port.SocketWrapper;
-import org.smoodi.physalus.exchange.HttpRequest;
 import org.smoodi.physalus.exchange.HttpResponse;
 
 import java.io.IOException;
+import java.util.Map;
 
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ResponseSender {
 
-    public static void send(final SocketWrapper socket, final HttpResponse response) {
+    private static final String PROTOCOL = "HTTP/1.1";
 
-    }
+    public static void send(final SocketWrapper socket, final HttpResponse response) throws IOException {
+        var writer = socket.getOutput();
 
-    public static void send(final SocketWrapper socket, final HttpRequest request, final HttpResponse response) {
+        writer.write(PROTOCOL + " " + response.getStatusCode().status + " " + response.getStatusCode().reason + "\r\n");
+        for (Map.Entry<String, String> entry : response.getHeaders().toMap().entrySet()) {
+            String key = entry.getKey();
+            String value = entry.getValue();
+            writer.write(key + ": " + value + "\r\n");
+        }
+        writer.write(response.getContent().toString() + "\r\n");
+
+        writer.flush();
+        writer.close();
     }
 
     public static void sendOK(final SocketWrapper socket) throws IOException {
