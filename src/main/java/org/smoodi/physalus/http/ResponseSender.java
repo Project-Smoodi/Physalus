@@ -65,7 +65,7 @@ public final class ResponseSender {
         send(socket, createStatusResponse(socket, HttpStatus.INTERNAL_SERVER_ERROR));
     }
 
-    private static HttpResponse createStatusResponse(final SocketWrapper socket, final HttpStatus status) throws IOException {
+    private static HttpResponse createStatusResponse(final SocketWrapper socket, final HttpStatus status)    {
         final HttpResponse response = new SocketBasedHttpExchange.Response(socket.get().getRemoteSocketAddress().toString());
 
         response.setStatusCode(status);
