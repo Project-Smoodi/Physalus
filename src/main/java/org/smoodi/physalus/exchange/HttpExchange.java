@@ -1,6 +1,6 @@
 package org.smoodi.physalus.exchange;
 
-public interface HttpExchange {
+public interface HttpExchange extends Exchange {
 
     HttpRequest getRequest();
 
