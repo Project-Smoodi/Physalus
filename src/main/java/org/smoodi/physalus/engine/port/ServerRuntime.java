@@ -2,8 +2,12 @@ package org.smoodi.physalus.engine.port;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.smoodi.annotation.NotNull;
+import org.smoodi.annotation.Nullable;
 import org.smoodi.physalus.Tagged;
 import org.smoodi.physalus.engine.ListeningEngine;
+import org.smoodi.physalus.exchange.HttpExchange;
+import org.smoodi.physalus.http.ResponseSender;
 import org.smoodi.physalus.status.Stated;
 
 import java.io.IOException;
@@ -116,6 +120,43 @@ public class ServerRuntime implements Ported, Stated {
 
         log.debug("The request passed to engine. Socket@{}", socket.hashCode());
         engine.doService(socket, port.getTag());
+    }
+
+    public void response(@Nullable HttpExchange exchange, @NotNull SocketWrapper socket) {
+        assert socket != null;
+
+        try {
+            if (socket.get().isClosed()) {
+                return;
+            }
+
+            if (socket.get().isOutputShutdown() || !socket.get().isConnected()) {
+                socket.get().close();
+            }
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+        }
+
+        try {
+            if (exchange == null) {
+                ResponseSender.sendInternalServerError(socket);
+            } else {
+                ResponseSender.send(socket, exchange.getResponse());
+            }
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+            try {
+                ResponseSender.sendInternalServerError(socket);
+            } catch (IOException ex) {
+                log.error(ex.getMessage(), ex);
+            }
+        } finally {
+            try {
+                socket.get().close();
+            } catch (IOException e) {
+                log.error(e.getMessage(), e);
+            }
+        }
     }
 
     /**

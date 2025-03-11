@@ -9,11 +9,10 @@ import org.smoodi.physalus.engine.adapter.AdapterManager;
 import org.smoodi.physalus.engine.port.Ported;
 import org.smoodi.physalus.engine.port.ServerRuntime;
 import org.smoodi.physalus.engine.port.SocketWrapper;
-import org.smoodi.physalus.exchange.Request;
-import org.smoodi.physalus.http.RequestParser;
-import org.smoodi.physalus.http.ResponseSender;
+import org.smoodi.physalus.exchange.HttpExchange;
+import org.smoodi.physalus.exchange.HttpStatus;
+import org.smoodi.physalus.exchange.SocketBasedHttpExchange;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.ThreadFactory;
@@ -68,32 +67,23 @@ public class Physalus
     @Override
     public void doService(SocketWrapper socket, List<String> tags) {
         threadFactory.newThread(() -> {
+            HttpExchange exchange = null;
             try {
                 // TODO("요청에 대한 처리")
-                RequestParser.parse(socket);
+                exchange = SocketBasedHttpExchange.of(socket);
+
+                mainController(exchange, tags);
 
                 log.debug("Application processing finished. Socket@{}", socket.hashCode());
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
-            } finally {
-                try {
-                    ResponseSender.sendOK(socket);
-                    log.debug("Send the response at: {}. Socket@{}", LocalDateTime.now(), socket.hashCode());
-                } catch (IOException e) {
-                    log.error(e.getMessage(), e);
-                } finally {
-                    try {
-                        socket.get().close();
-                        log.debug("Socket successfully closed. Socket@{}", socket.hashCode());
-                    } catch (IOException e) {
-                        log.error(e.getMessage(), e);
-                    }
-                }
             }
+
+            serverRuntime.response(exchange, socket);
         }).start();
     }
 
-    public void mainController(Request request, List<String> tags) {
-
+    public void mainController(HttpExchange exchange, List<String> tags) {
+        exchange.getResponse().setStatusCode(HttpStatus.OK);
     }
 }
