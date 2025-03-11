@@ -7,7 +7,6 @@ import org.smoodi.physalus.Tagged;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.List;
 
 
 @Slf4j
@@ -32,7 +31,7 @@ public class SocketListeningPort implements Tagged {
     }
 
     @Override
-    public List<String> getTag() {
+    public String getTag() {
         return value.getTag();
     }
 

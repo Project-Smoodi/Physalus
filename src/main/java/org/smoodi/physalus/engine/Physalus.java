@@ -10,11 +10,9 @@ import org.smoodi.physalus.engine.port.Ported;
 import org.smoodi.physalus.engine.port.ServerRuntime;
 import org.smoodi.physalus.engine.port.SocketWrapper;
 import org.smoodi.physalus.exchange.HttpExchange;
-import org.smoodi.physalus.exchange.HttpStatus;
 import org.smoodi.physalus.exchange.SocketBasedHttpExchange;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.concurrent.ThreadFactory;
 
 @Slf4j
@@ -65,14 +63,14 @@ public class Physalus
     }
 
     @Override
-    public void doService(SocketWrapper socket, List<String> tags) {
+    public void doService(SocketWrapper socket, String tag) {
         threadFactory.newThread(() -> {
             HttpExchange exchange = null;
             try {
                 // TODO("요청에 대한 처리")
                 exchange = SocketBasedHttpExchange.of(socket);
 
-                mainController(exchange, tags);
+                mainController(exchange, tag);
 
                 log.debug("Application processing finished. Socket@{}", socket.hashCode());
             } catch (Exception e) {

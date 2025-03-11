@@ -85,9 +85,10 @@ public class ServerRuntime implements Ported, Stated {
 
                     Socket socket = port.accept();
 
-                    if (port.getTag().contains(Tagged.StandardTags.HTTP.value) || port.getTag().contains(Tagged.StandardTags.HTTPS.value)) {
+                    if (port.getTag().equals(Tagged.StandardTags.HTTP.value)
+                            || port.getTag().equals(Tagged.StandardTags.HTTPS.value)) {
                         resolveHttpRequest(socket, new Port(port.getPortNumber(), port.getTag()));
-                    } else if (port.getTag().contains(Tagged.StandardTags.TCP.value)) {
+                    } else if (port.getTag().equals(Tagged.StandardTags.TCP.value)) {
                         // TODO("TCP Request")
                         try {
                             socket.close();

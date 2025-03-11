@@ -1,12 +1,14 @@
 package org.smoodi.physalus;
 
 import lombok.AllArgsConstructor;
+import org.smoodi.annotation.NotNull;
 
 import java.util.List;
 
 public interface Tagged {
 
-    List<String> getTag();
+    @NotNull
+    String getTag();
 
     @AllArgsConstructor
     enum StandardTags {
@@ -15,6 +17,7 @@ public interface Tagged {
         HTTPS("HTTPS"),
         TCP("TCP"),
         TEST("Test"),
+        UNKNOWN("UNKNOWN");
         ;
 
         public final String value;
