@@ -47,7 +47,7 @@ public class Port implements Tagged {
     @UnmodifiableArray
     private static List<String> autoTagging(int portNumber) {
 
-        var matchedStandardPorts = Arrays.stream(StandardPorts.values()).filter(it -> it.portNumber == portNumber).map(Enum::name).toList();
+        var matchedStandardPorts = Arrays.stream(StandardPorts.values()).filter(it -> it.portNumber == portNumber).map(it -> it.name).toList();
 
         if (!matchedStandardPorts.isEmpty()) {
             return matchedStandardPorts;
