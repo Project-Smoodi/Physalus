@@ -59,6 +59,11 @@ public class MapHttpHeaders
         return get(key.toString());
     }
 
+    @Override
+    public void set(@NotNull final HttpHeaderNames key, final String value) {
+        set(key.name, value);
+    }
+
     @Nullable
     @Override
     public String contentType() {
@@ -69,6 +74,12 @@ public class MapHttpHeaders
     @Override
     public String contentEncoding() {
         return get(HttpHeaderNames.CONTENT_ENCODING);
+    }
+
+    @Nullable
+    @Override
+    public String contentLength() {
+        return get(HttpHeaderNames.CONTENT_LENGTH);
     }
 
     @Nullable

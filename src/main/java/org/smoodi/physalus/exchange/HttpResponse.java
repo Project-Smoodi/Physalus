@@ -43,6 +43,8 @@ public interface HttpResponse extends Response {
     @Override
     Object getContent();
 
+    void json(@NotNull Object valueObject);
+
     /**
      * <p>Return headers of response.</p>
      *
@@ -53,4 +55,19 @@ public interface HttpResponse extends Response {
     @NotNull
     @Override
     HttpHeaders getHeaders();
+
+    /**
+     * Return status code of response.
+     *
+     * @return Status code of response.
+     * @see HttpStatus
+     */
+    @NotNull
+    HttpStatus getStatusCode();
+
+    void setStatusCode(@NotNull HttpStatus status);
+
+    // TODO("내가 만든 Cookie")
+
+    void finish();
 }

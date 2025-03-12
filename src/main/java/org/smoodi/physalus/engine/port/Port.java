@@ -1,19 +1,18 @@
-package org.smoodi.physalus;
+package org.smoodi.physalus.engine.port;
 
 import lombok.Getter;
 import org.smoodi.annotation.array.UnmodifiableArray;
+import org.smoodi.physalus.Tagged;
 import org.smoodi.physalus.exchange.StandardPorts;
 
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 @Getter
 public class Port implements Tagged {
 
     private final int portNumber;
 
-    private final List<String> tag;
+    private final String tag;
 
     public Port(
             int portNumber
@@ -29,13 +28,6 @@ public class Port implements Tagged {
             int portNumber,
             String tag
     ) {
-        this(portNumber, Collections.singletonList(tag));
-    }
-
-    public Port(
-            int portNumber,
-            List<String> tag
-    ) {
         if (portNumber < 0 || portNumber > 65535) {
             throw new IllegalArgumentException("Port number out of range");
         }
@@ -44,14 +36,14 @@ public class Port implements Tagged {
     }
 
     @UnmodifiableArray
-    private static List<String> autoTagging(int portNumber) {
+    private static String autoTagging(int portNumber) {
 
-        var matchedStandardPorts = Arrays.stream(StandardPorts.values()).filter(it -> it.portNumber == portNumber).map(Enum::name).toList();
+        var matchedStandardPorts = Arrays.stream(StandardPorts.values()).filter(it -> it.portNumber == portNumber).map(it -> it.name).toList();
 
-        if (!matchedStandardPorts.isEmpty()) {
-            return matchedStandardPorts;
+        if (matchedStandardPorts.size() == 1) {
+            return matchedStandardPorts.getFirst();
         } else {
-            return Collections.emptyList();
+            return StandardTags.UNKNOWN.value;
         }
     }
 

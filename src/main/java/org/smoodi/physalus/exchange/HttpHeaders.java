@@ -20,11 +20,17 @@ public interface HttpHeaders extends Headers {
     @Overload
     String get(@NotNull final HttpHeaderNames key);
 
+    @Overload
+    void set(@NotNull final HttpHeaderNames key, final String value);
+
     @Nullable
     String contentType();
 
     @Nullable
     String contentEncoding();
+
+    @Nullable
+    String contentLength();
 
     @Nullable
     String contentLanguage();
