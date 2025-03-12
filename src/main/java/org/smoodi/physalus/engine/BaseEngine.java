@@ -1,14 +1,13 @@
 package org.smoodi.physalus.engine;
 
 import lombok.Getter;
-import org.smoodi.physalus.engine.adapter.Adapted;
-import org.smoodi.physalus.engine.adapter.Adapter;
+import org.smoodi.physalus.engine.adapter.AdapterContext;
 import org.smoodi.physalus.engine.port.Port;
 import org.smoodi.physalus.engine.port.Ported;
 import org.smoodi.physalus.status.Stated;
 
 public abstract class BaseEngine
-        implements Engine, ListeningEngine, Ported, Adapted, Stated {
+        implements Engine, ListeningEngine, Ported, Stated {
 
     /**
      * <p>{@link State#NONE}, {@link State#INITIALIZING}, {@link State#STARTING}, {@link State#RUNNING}, {@link State#STOPPING}, {@link State#STOPPED}</p>
@@ -18,23 +17,7 @@ public abstract class BaseEngine
 
     protected abstract Ported ported();
 
-    protected abstract Adapted adapted();
-
-
-    @Override
-    public boolean addAdapter(Adapter adapter) {
-        return adapted().addAdapter(adapter);
-    }
-
-    @Override
-    public boolean removeAdapter(Adapter adapter) {
-        return adapted().removeAdapter(adapter);
-    }
-
-    @Override
-    public boolean removeAdapter(String tag) {
-        return adapted().removeAdapter(tag);
-    }
+    protected abstract AdapterContext adapterContext();
 
     @Override
     public boolean addPort(Port port) {
