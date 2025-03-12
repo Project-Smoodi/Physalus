@@ -1,11 +1,16 @@
 package org.smoodi.physalus.engine.adapter;
 
+import org.smoodi.physalus.exchange.Exchange;
+
 import java.util.HashSet;
 import java.util.Set;
 
 public class AdapterManager implements Adapted {
 
     private final Set<Adapter> adapters = new HashSet<>();
+
+    public void resolve(Exchange exchange, String tag) {
+    }
 
     @Override
     public boolean addAdapter(Adapter adapter) {

@@ -81,7 +81,10 @@ public class Physalus
         }).start();
     }
 
-    public void mainController(HttpExchange exchange, List<String> tags) {
-        exchange.getResponse().setStatusCode(HttpStatus.OK);
+    public void mainController(HttpExchange exchange, String tag) {
+
+        // TODO("Filtering...")
+
+        adapterManager.resolve(exchange, tag);
     }
 }
