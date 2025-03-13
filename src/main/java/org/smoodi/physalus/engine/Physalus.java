@@ -4,9 +4,9 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.smoodi.physalus.engine.adapter.Adapted;
-import org.smoodi.physalus.engine.adapter.AdapterManager;
-import org.smoodi.physalus.engine.port.Ported;
+import org.smoodi.physalus.engine.adapter.AdapterContext;
+import org.smoodi.physalus.engine.adapter.PhysalusAdapterManager;
+import org.smoodi.physalus.engine.port.PortContext;
 import org.smoodi.physalus.engine.port.ServerRuntime;
 import org.smoodi.physalus.engine.port.SocketWrapper;
 import org.smoodi.physalus.exchange.HttpExchange;
@@ -26,17 +26,17 @@ public class Physalus
     private final ServerRuntime serverRuntime = new ServerRuntime(this);
 
     @Getter
-    private final AdapterManager adapterManager = new AdapterManager();
+    private final AdapterContext adapterManager = new PhysalusAdapterManager();
 
     private final ThreadFactory threadFactory = Thread.ofVirtual().name("request-resolver-", 0).factory();
 
     @Override
-    protected Ported ported() {
+    protected PortContext ported() {
         return serverRuntime;
     }
 
     @Override
-    protected Adapted adapted() {
+    protected AdapterContext adapterContext() {
         return adapterManager;
     }
 
@@ -85,6 +85,6 @@ public class Physalus
 
         // TODO("Filtering...")
 
-        adapterManager.resolve(exchange, tag);
+        adapterManager.execute(exchange, tag);
     }
 }

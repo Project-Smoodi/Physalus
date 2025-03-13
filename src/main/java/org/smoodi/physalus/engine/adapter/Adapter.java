@@ -5,5 +5,5 @@ import org.smoodi.physalus.exchange.Exchange;
 
 public interface Adapter extends Tagged {
 
-    void resolve(Exchange exchange);
+    void execute(Exchange exchange);
 }

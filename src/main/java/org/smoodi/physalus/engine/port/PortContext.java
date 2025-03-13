@@ -1,6 +1,6 @@
 package org.smoodi.physalus.engine.port;
 
-public interface Ported {
+public interface PortContext {
 
     boolean addPort(Port port);
 

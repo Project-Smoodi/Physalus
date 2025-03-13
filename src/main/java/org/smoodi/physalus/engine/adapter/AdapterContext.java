@@ -1,6 +1,6 @@
 package org.smoodi.physalus.engine.adapter;
 
-public interface Adapted {
+public interface AdapterContext extends AdapterManager {
 
     boolean addAdapter(Adapter adapter);
 

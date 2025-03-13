@@ -9,9 +9,9 @@ import java.util.Objects;
 public abstract class AbstractHttpAdapter implements Adapter {
 
     @Override
-    public final void resolve(@NotNull Exchange exchange) {
+    public final void execute(@NotNull Exchange exchange) {
         if (Objects.requireNonNull(exchange) instanceof HttpExchange) {
-            resolve(exchange);
+            execute(exchange);
         }
         throw new IllegalArgumentException("Unsupported exchange type: " + exchange.getClass().getName());
     }
