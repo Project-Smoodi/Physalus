@@ -1,10 +1,10 @@
-package org.smoodi.physalus.http;
+package org.smoodi.physalus.transfer.http;
 
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.smoodi.physalus.engine.port.SocketWrapper;
-import org.smoodi.physalus.exchange.*;
+import org.smoodi.physalus.transfer.Headers;
 
 import java.io.BufferedReader;
 import java.io.IOException;

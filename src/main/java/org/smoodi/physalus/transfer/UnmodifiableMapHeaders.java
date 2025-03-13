@@ -1,4 +1,4 @@
-package org.smoodi.physalus.exchange;
+package org.smoodi.physalus.transfer;
 
 import lombok.NoArgsConstructor;
 import org.smoodi.annotation.NotNull;
@@ -11,20 +11,20 @@ import java.lang.instrument.UnmodifiableModuleException;
 import java.util.Map;
 
 /**
- * <p><b>Unmodifiable</b> wrapper class of HTTP headers saved as {@link Map Map}.</p>
+ * <p><b>Unmodifiable</b> wrapper class of headers saved as {@link Map Map}.</p>
  *
  * @author Daybreak312
- * @see HttpHeaders
+ * @see MapHeaders
  * @since v0.0.1
  */
 @NoArgsConstructor
-public class UnmodifiableMapHttpHeaders extends MapHttpHeaders {
+public class UnmodifiableMapHeaders extends MapHeaders {
 
-    public UnmodifiableMapHttpHeaders(@NotNull final Map<String, String> headers) {
+    public UnmodifiableMapHeaders(@NotNull final Map<String, String> headers) {
         super(headers);
     }
 
-    public UnmodifiableMapHttpHeaders(@NotNull final Headers headers) {
+    public UnmodifiableMapHeaders(@NotNull final Headers headers) {
         super(headers);
     }
 
@@ -32,22 +32,24 @@ public class UnmodifiableMapHttpHeaders extends MapHttpHeaders {
     @NotNull
     @Overload
     @StaticFactoryMethod
-    public static UnmodifiableMapHttpHeaders of(@NotNull final Map<String, String> headers) {
-        return new UnmodifiableMapHttpHeaders(headers);
+    public static UnmodifiableMapHeaders of(@NotNull final Map<String, String> headers) {
+        assert headers != null;
+        return new UnmodifiableMapHeaders(headers);
     }
 
     @EmptyableArray
     @NotNull
     @Overload
     @StaticFactoryMethod
-    public static UnmodifiableMapHttpHeaders of(@NotNull final Headers headers) {
-        return new UnmodifiableMapHttpHeaders(headers);
+    public static UnmodifiableMapHeaders of(@NotNull final Headers headers) {
+        return new UnmodifiableMapHeaders(headers);
     }
 
     @EmptyArray
     @NotNull
-    public static UnmodifiableMapHttpHeaders empty() {
-        return new UnmodifiableMapHttpHeaders();
+    @StaticFactoryMethod
+    public static UnmodifiableMapHeaders empty() {
+        return new UnmodifiableMapHeaders();
     }
 
     @Override

@@ -1,4 +1,4 @@
-package org.smoodi.physalus.exchange;
+package org.smoodi.physalus.transfer.http;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

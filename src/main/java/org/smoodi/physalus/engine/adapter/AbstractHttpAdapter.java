@@ -1,8 +1,8 @@
 package org.smoodi.physalus.engine.adapter;
 
 import org.smoodi.annotation.NotNull;
-import org.smoodi.physalus.exchange.Exchange;
-import org.smoodi.physalus.exchange.HttpExchange;
+import org.smoodi.physalus.transfer.Exchange;
+import org.smoodi.physalus.transfer.http.HttpExchange;
 
 import java.util.Objects;
 
