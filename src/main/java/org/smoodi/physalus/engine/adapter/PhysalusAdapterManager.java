@@ -1,6 +1,6 @@
 package org.smoodi.physalus.engine.adapter;
 
-import org.smoodi.physalus.exchange.Exchange;
+import org.smoodi.physalus.transfer.Exchange;
 
 import java.util.HashSet;
 import java.util.Set;

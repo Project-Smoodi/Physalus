@@ -1,4 +1,4 @@
-package org.smoodi.physalus.exchange;
+package org.smoodi.physalus.transfer.http;
 
 import lombok.NoArgsConstructor;
 import org.smoodi.annotation.NotNull;
@@ -7,6 +7,8 @@ import org.smoodi.annotation.Overload;
 import org.smoodi.annotation.StaticFactoryMethod;
 import org.smoodi.annotation.array.EmptyArray;
 import org.smoodi.annotation.array.EmptyableArray;
+import org.smoodi.physalus.transfer.Headers;
+import org.smoodi.physalus.transfer.MapHeaders;
 
 import java.util.Map;
 

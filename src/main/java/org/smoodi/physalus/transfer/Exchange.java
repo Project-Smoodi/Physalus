@@ -1,4 +1,4 @@
-package org.smoodi.physalus.exchange;
+package org.smoodi.physalus.transfer;
 
 public interface Exchange {
 

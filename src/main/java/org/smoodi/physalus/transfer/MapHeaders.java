@@ -1,4 +1,4 @@
-package org.smoodi.physalus.exchange;
+package org.smoodi.physalus.transfer;
 
 import lombok.NoArgsConstructor;
 import org.smoodi.annotation.NotNull;

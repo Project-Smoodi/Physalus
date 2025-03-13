@@ -9,8 +9,8 @@ import org.smoodi.physalus.engine.adapter.PhysalusAdapterManager;
 import org.smoodi.physalus.engine.port.PortContext;
 import org.smoodi.physalus.engine.port.ServerRuntime;
 import org.smoodi.physalus.engine.port.SocketWrapper;
-import org.smoodi.physalus.exchange.HttpExchange;
-import org.smoodi.physalus.exchange.SocketBasedHttpExchange;
+import org.smoodi.physalus.transfer.http.HttpExchange;
+import org.smoodi.physalus.transfer.http.SocketBasedHttpExchange;
 
 import java.time.LocalDateTime;
 import java.util.concurrent.ThreadFactory;

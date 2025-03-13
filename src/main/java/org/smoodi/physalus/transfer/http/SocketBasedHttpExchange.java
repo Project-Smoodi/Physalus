@@ -1,4 +1,4 @@
-package org.smoodi.physalus.exchange;
+package org.smoodi.physalus.transfer.http;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -8,7 +8,6 @@ import org.smoodi.annotation.NotNull;
 import org.smoodi.annotation.Nullable;
 import org.smoodi.annotation.array.UnmodifiableArray;
 import org.smoodi.physalus.engine.port.SocketWrapper;
-import org.smoodi.physalus.http.RequestParser;
 
 import java.io.IOException;
 import java.net.Socket;

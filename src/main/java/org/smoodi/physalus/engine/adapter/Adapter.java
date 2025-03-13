@@ -1,7 +1,7 @@
 package org.smoodi.physalus.engine.adapter;
 
 import org.smoodi.physalus.Tagged;
-import org.smoodi.physalus.exchange.Exchange;
+import org.smoodi.physalus.transfer.Exchange;
 
 public interface Adapter extends Tagged {
 

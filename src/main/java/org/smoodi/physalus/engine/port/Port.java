@@ -3,7 +3,7 @@ package org.smoodi.physalus.engine.port;
 import lombok.Getter;
 import org.smoodi.annotation.array.UnmodifiableArray;
 import org.smoodi.physalus.Tagged;
-import org.smoodi.physalus.exchange.StandardPorts;
+import org.smoodi.physalus.transfer.StandardPorts;
 
 import java.util.Arrays;
 

@@ -1,22 +1,22 @@
-package org.smoodi.physalus.exchange;
+package org.smoodi.physalus.transfer;
 
 import lombok.RequiredArgsConstructor;
 import org.smoodi.annotation.NotNull;
 import org.smoodi.annotation.Nullable;
 import org.smoodi.annotation.array.EmptyableArray;
-import org.smoodi.annotation.array.UnmodifiableArray;
+import org.smoodi.annotation.array.ModifiableArray;
 
 @RequiredArgsConstructor
-public class TcpRequest implements Request {
+public class TcpResponse implements Response {
 
     private final String ipAddress;
 
     private final byte ipAddressVersion;
 
-    private final Object content;
+    private Object content;
 
-    @UnmodifiableArray
-    private final Headers headers;
+    @ModifiableArray
+    private final Headers headers = MapHeaders.empty();
 
     @NotNull
     @Override
@@ -30,8 +30,13 @@ public class TcpRequest implements Request {
         return this.content;
     }
 
+    @Override
+    public void setContent(@Nullable Object content) {
+        this.content = content;
+    }
+
     @EmptyableArray
-    @UnmodifiableArray
+    @ModifiableArray
     @NotNull
     @Override
     public Headers getHeaders() {

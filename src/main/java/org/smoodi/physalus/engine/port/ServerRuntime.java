@@ -6,8 +6,8 @@ import org.smoodi.annotation.NotNull;
 import org.smoodi.annotation.Nullable;
 import org.smoodi.physalus.Tagged;
 import org.smoodi.physalus.engine.ListeningEngine;
-import org.smoodi.physalus.exchange.HttpExchange;
-import org.smoodi.physalus.http.ResponseSender;
+import org.smoodi.physalus.transfer.http.HttpExchange;
+import org.smoodi.physalus.transfer.http.ResponseSender;
 import org.smoodi.physalus.status.Stated;
 
 import java.io.IOException;

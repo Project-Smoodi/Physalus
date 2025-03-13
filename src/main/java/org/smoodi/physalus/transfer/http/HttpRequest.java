@@ -1,9 +1,10 @@
-package org.smoodi.physalus.exchange;
+package org.smoodi.physalus.transfer.http;
 
 import org.smoodi.annotation.NotNull;
 import org.smoodi.annotation.Nullable;
 import org.smoodi.annotation.array.EmptyableArray;
 import org.smoodi.annotation.array.UnmodifiableArray;
+import org.smoodi.physalus.transfer.Request;
 
 import java.util.Map;
 

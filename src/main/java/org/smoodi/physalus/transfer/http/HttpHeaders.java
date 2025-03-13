@@ -1,8 +1,9 @@
-package org.smoodi.physalus.exchange;
+package org.smoodi.physalus.transfer.http;
 
 import org.smoodi.annotation.NotNull;
 import org.smoodi.annotation.Nullable;
 import org.smoodi.annotation.Overload;
+import org.smoodi.physalus.transfer.Headers;
 
 /**
  * <p>Wrapper of HTTP headers saved as Key-Value {@link java.util.Collection Collection}.</p>

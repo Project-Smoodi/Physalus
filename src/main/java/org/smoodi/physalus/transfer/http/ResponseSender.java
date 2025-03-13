@@ -1,12 +1,9 @@
-package org.smoodi.physalus.http;
+package org.smoodi.physalus.transfer.http;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.smoodi.physalus.engine.port.SocketWrapper;
-import org.smoodi.physalus.exchange.HttpResponse;
-import org.smoodi.physalus.exchange.HttpStatus;
-import org.smoodi.physalus.exchange.SocketBasedHttpExchange;
 
 import java.io.IOException;
 import java.util.Map;
