@@ -3,11 +3,11 @@ package org.smoodi.physalus.engine;
 import lombok.Getter;
 import org.smoodi.physalus.engine.adapter.AdapterContext;
 import org.smoodi.physalus.engine.port.Port;
-import org.smoodi.physalus.engine.port.Ported;
+import org.smoodi.physalus.engine.port.PortContext;
 import org.smoodi.physalus.status.Stated;
 
 public abstract class BaseEngine
-        implements Engine, ListeningEngine, Ported, Stated {
+        implements Engine, ListeningEngine, PortContext, Stated {
 
     /**
      * <p>{@link State#NONE}, {@link State#INITIALIZING}, {@link State#STARTING}, {@link State#RUNNING}, {@link State#STOPPING}, {@link State#STOPPED}</p>
@@ -15,7 +15,7 @@ public abstract class BaseEngine
     @Getter
     protected State state = State.NONE;
 
-    protected abstract Ported ported();
+    protected abstract PortContext ported();
 
     protected abstract AdapterContext adapterContext();
 

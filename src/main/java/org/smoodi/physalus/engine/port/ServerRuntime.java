@@ -19,7 +19,7 @@ import java.util.Set;
 import java.util.concurrent.ThreadFactory;
 
 @Slf4j
-public class ServerRuntime implements Ported, Stated {
+public class ServerRuntime implements PortContext, Stated {
 
     /**
      * <p>{@link State#NONE}, {@link State#SETTING}, {@link State#STARTING}, {@link State#RUNNING}, {@link State#STOPPING}, {@link State#STOPPED}</p>

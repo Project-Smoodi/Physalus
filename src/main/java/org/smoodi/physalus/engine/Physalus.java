@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.smoodi.physalus.engine.adapter.AdapterContext;
 import org.smoodi.physalus.engine.adapter.PhysalusAdapterManager;
-import org.smoodi.physalus.engine.port.Ported;
+import org.smoodi.physalus.engine.port.PortContext;
 import org.smoodi.physalus.engine.port.ServerRuntime;
 import org.smoodi.physalus.engine.port.SocketWrapper;
 import org.smoodi.physalus.exchange.HttpExchange;
@@ -31,7 +31,7 @@ public class Physalus
     private final ThreadFactory threadFactory = Thread.ofVirtual().name("request-resolver-", 0).factory();
 
     @Override
-    protected Ported ported() {
+    protected PortContext ported() {
         return serverRuntime;
     }
 
