@@ -41,19 +41,19 @@ public final class RequestParser {
             temp.path = pathParam[0];
             temp.protocol = input[2];
 
-            if (input[1].split("\\?").length > 1) {
+            if (pathParam[1] != null) {
                 temp.params = Map.copyOf(getParams(pathParam[1]));
             } else {
                 temp.params = Map.of();
             }
         } catch (Exception e) {
-            throw new IllegalArgumentException("Not a HTTP request.");
+            throw new IllegalArgumentException("Not a HTTP request.", e);
         }
     }
 
     private static Map<String, String> getParams(String paramString) {
         Map<String, String> params = new HashMap<>();
-        for (String param : paramString.split("\\?")[1].split("&")) {
+        for (String param : paramString.split("&")) {
             String[] keyValue = param.split("=");
             if (keyValue.length != 2) {
                 throw new IllegalArgumentException("One parameter in the request is invalid: \"" + param + "\"");
