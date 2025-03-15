@@ -1,14 +1,18 @@
 package org.smoodi.physalus.transfer.socket;
 
-import java.io.Reader;
-import java.io.Writer;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 
 /**
  * <p>A 'Socket' with I/O Stream.</p>
  */
 public interface IOStreamSocket extends Socket {
 
-    Reader getInput();
+    BufferedReader getInput();
 
-    Writer getOutput();
+    BufferedWriter getOutput();
+
+    boolean isInputShutdown();
+
+    boolean isOutputShutdown();
 }

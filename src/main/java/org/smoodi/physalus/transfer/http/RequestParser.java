@@ -3,8 +3,8 @@ package org.smoodi.physalus.transfer.http;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.smoodi.physalus.engine.port.SocketWrapper;
 import org.smoodi.physalus.transfer.Headers;
+import org.smoodi.physalus.transfer.socket.IOStreamSocket;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -14,11 +14,11 @@ import java.util.Map;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class RequestParser {
 
-    public static HttpRequest parse(SocketWrapper socket) throws IOException {
+    public static HttpRequest parse(IOStreamSocket socket) throws IOException {
         RequestTemp temp = new RequestTemp();
         var reader = socket.getInput();
 
-        temp.address = socket.get().getRemoteSocketAddress().toString();
+        temp.address = socket.toNative().getRemoteSocketAddress().toString();
 
         major(reader, temp);
 
@@ -30,32 +30,40 @@ public final class RequestParser {
     }
 
     private static void major(BufferedReader reader, RequestTemp temp) throws IOException {
-        var input = reader.readLine();
-        var split = input.split(" ");
-        if (!split[2].startsWith("HTTP")) {
+        var input = reader.readLine().split(" ");
+
+        if (!input[2].startsWith("HTTP")) {
             throw new IllegalArgumentException("Not a HTTP request.");
         }
-        temp.method = HttpMethod.valueOf(split[0]);
-        String[] pathParam = split[1].split("\\?");
-        temp.path = pathParam[0];
-        temp.protocol = split[2];
+        try {
+            temp.method = HttpMethod.valueOf(input[0]);
+            String[] pathParam = input[1].split("\\?");
+            temp.path = pathParam[0];
+            temp.protocol = input[2];
 
-        if (pathParam.length > 1) {
-            Map<String, String> params = new HashMap<>();
-            for (String param : split[1].split("\\?")[1].split("&")) {
-                String[] keyValue = param.split("=");
-                if (keyValue.length != 2) {
-                    throw new IllegalArgumentException("One parameter in the request is invalid: \"" + param + "\"");
-                }
-                if (keyValue[0].isBlank()) {
-                    throw new IllegalArgumentException("One parameter's key in the request is invalid: \"" + param + "\"");
-                }
-                params.put(keyValue[0], keyValue[1]);
+            if (input[1].split("\\?").length > 1) {
+                temp.params = Map.copyOf(getParams(pathParam[1]));
+            } else {
+                temp.params = Map.of();
             }
-            temp.params = Map.copyOf(params);
-        } else {
-            temp.params = Map.of();
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Not a HTTP request.");
         }
+    }
+
+    private static Map<String, String> getParams(String paramString) {
+        Map<String, String> params = new HashMap<>();
+        for (String param : paramString.split("\\?")[1].split("&")) {
+            String[] keyValue = param.split("=");
+            if (keyValue.length != 2) {
+                throw new IllegalArgumentException("One parameter in the request is invalid: \"" + param + "\"");
+            }
+            if (keyValue[0].isBlank()) {
+                throw new IllegalArgumentException("One parameter's key in the request is invalid: \"" + param + "\"");
+            }
+            params.put(keyValue[0], keyValue[1]);
+        }
+        return params;
     }
 
     private static void headers(BufferedReader reader, RequestTemp temp) throws IOException {

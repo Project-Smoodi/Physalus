@@ -1,4 +1,4 @@
-package org.smoodi.physalus.engine.port;
+package org.smoodi.physalus.transfer.socket;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -7,7 +7,7 @@ import java.io.*;
 import java.net.Socket;
 
 @Slf4j
-public class SocketWrapper {
+public class SocketWrapper implements IOStreamSocket {
 
     private final Socket socket;
 
@@ -20,6 +20,35 @@ public class SocketWrapper {
 
     @Getter
     private final BufferedWriter output;
+
+    @Override
+    public Socket toNative() {
+        return this.socket;
+    }
+
+    @Override
+    public void close() {
+        try {
+            this.socket.close();
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public boolean isClosed() {
+        return this.socket.isClosed();
+    }
+
+    @Override
+    public boolean isConnected() {
+        return this.socket.isConnected();
+    }
+
+    @Override
+    public boolean isBound() {
+        return this.socket.isBound();
+    }
 
     public SocketWrapper(Socket socket) {
         this.socket = socket;
@@ -38,5 +67,15 @@ public class SocketWrapper {
                 throw new IllegalArgumentException("Socket is not available; it's errored.", e);
             }
         }
+    }
+
+    @Override
+    public boolean isInputShutdown() {
+        return this.socket.isInputShutdown();
+    }
+
+    @Override
+    public boolean isOutputShutdown() {
+        return this.socket.isOutputShutdown();
     }
 }

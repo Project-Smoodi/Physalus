@@ -7,5 +7,13 @@ package org.smoodi.physalus.transfer.socket;
  */
 public interface Socket {
 
-    void close();
+    java.net.Socket toNative();
+
+    void close() throws SocketShutdownException;
+
+    boolean isClosed();
+
+    boolean isConnected();
+
+    boolean isBound();
 }

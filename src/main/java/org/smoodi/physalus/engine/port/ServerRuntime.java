@@ -9,6 +9,7 @@ import org.smoodi.physalus.engine.ListeningEngine;
 import org.smoodi.physalus.transfer.http.HttpExchange;
 import org.smoodi.physalus.transfer.http.ResponseSender;
 import org.smoodi.physalus.status.Stated;
+import org.smoodi.physalus.transfer.socket.SocketWrapper;
 
 import java.io.IOException;
 import java.net.Socket;

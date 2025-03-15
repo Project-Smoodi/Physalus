@@ -7,10 +7,9 @@ import lombok.Getter;
 import org.smoodi.annotation.NotNull;
 import org.smoodi.annotation.Nullable;
 import org.smoodi.annotation.array.UnmodifiableArray;
-import org.smoodi.physalus.engine.port.SocketWrapper;
+import org.smoodi.physalus.transfer.socket.IOStreamSocket;
 
 import java.io.IOException;
-import java.net.Socket;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
@@ -22,26 +21,26 @@ public final class SocketBasedHttpExchange
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    private final SocketWrapper socket;
+    private final IOStreamSocket socket;
 
     private final HttpRequest request;
 
     // TODO("To HttpResponse")
     private final HttpResponse response;
 
-    public SocketBasedHttpExchange(SocketWrapper socket) throws IOException {
-        checkSocketAvailable(socket.get());
+    public SocketBasedHttpExchange(IOStreamSocket socket) throws IOException {
+        checkSocketAvailable(socket);
         this.socket = socket;
 
         this.request = RequestParser.parse(socket);
         this.response = new Response(this.request.getAddress());
     }
 
-    public static HttpExchange of(SocketWrapper socket) throws IOException {
+    public static HttpExchange of(IOStreamSocket socket) throws IOException {
         return new SocketBasedHttpExchange(socket);
     }
 
-    private void checkSocketAvailable(Socket socket) {
+    private void checkSocketAvailable(IOStreamSocket socket) {
         if (socket.isClosed()) {
             throw new IllegalArgumentException("Socket is not available; it's closed.");
         } else if (!socket.isConnected()) {
