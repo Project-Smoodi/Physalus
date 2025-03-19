@@ -12,4 +12,5 @@ public interface HttpSocket extends Socket {
 
     HttpResponse getResponse();
 
+    void doResponse() throws SocketShutdownException;
 }

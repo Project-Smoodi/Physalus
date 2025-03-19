@@ -7,8 +7,11 @@ import org.smoodi.physalus.transfer.http.SocketBasedHttpExchange;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.Map;
 
 public class HttpSocketWrapper implements HttpSocket {
+
+    private static final String PROTOCOL = "HTTP/1.1";
 
     private final HttpExchange exchange;
 
@@ -24,7 +27,7 @@ public class HttpSocketWrapper implements HttpSocket {
 
     public HttpExchange getExchange() {
         return this.exchange;
-}
+    }
 
     @Override
     public HttpRequest getRequest() {
@@ -34,6 +37,32 @@ public class HttpSocketWrapper implements HttpSocket {
     @Override
     public HttpResponse getResponse() {
         return this.getExchange().getResponse();
+    }
+
+    @Override
+    public void doResponse() throws SocketShutdownException {
+        var writer = this.socket.getOutput();
+        var response = this.exchange.getResponse();
+
+        response.finish();
+
+        try {
+            writer.write(PROTOCOL + " " + response.getStatusCode().status + " " + response.getStatusCode().reason + "\r\n");
+            for (Map.Entry<String, String> entry : response.getHeaders().toMap().entrySet()) {
+                writer.write(entry.getKey() + ": " + entry.getValue() + "\r\n");
+            }
+            if (response.getContent() != null) {
+                writer.write("\r\n");
+                writer.write(response.getContent().toString() + "\r\n");
+            }
+
+            writer.write("\r\n");
+
+            writer.flush();
+            writer.close();
+        } catch (IOException e) {
+            throw new SocketShutdownException(e);
+        }
     }
 
     @Override
