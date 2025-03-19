@@ -2,22 +2,23 @@ package org.smoodi.physalus.engine.port;
 
 import lombok.extern.slf4j.Slf4j;
 import org.smoodi.annotation.NotNull;
-import org.smoodi.physalus.Tagged;
+import org.smoodi.physalus.transfer.socket.HttpSocketWrapper;
+import org.smoodi.physalus.transfer.socket.Socket;
+import org.smoodi.physalus.transfer.socket.SocketWrapper;
 
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.net.Socket;
 
 
 @Slf4j
-public class SocketListeningPort implements Tagged {
+public class HttpPort implements Port {
 
-    private final Port value;
+    private final PortValue value;
 
     @NotNull
     private final ServerSocket serverSocket;
 
-    public SocketListeningPort(Port port) {
+    public HttpPort(PortValue port) {
         this.value = port;
         try {
             this.serverSocket = new ServerSocket(port.getPortNumber());
@@ -26,8 +27,8 @@ public class SocketListeningPort implements Tagged {
         }
     }
 
-    public static SocketListeningPort of(Port port) {
-        return new SocketListeningPort(port);
+    public static HttpPort of(PortValue port) {
+        return new HttpPort(port);
     }
 
     @Override
@@ -43,8 +44,24 @@ public class SocketListeningPort implements Tagged {
         return serverSocket.isBound();
     }
 
-    public Socket accept() throws IOException {
-        return serverSocket.accept();
+    public Socket accept() {
+        try {
+            java.net.Socket raw = serverSocket.accept();
+
+            try {
+                return new HttpSocketWrapper(
+                        new SocketWrapper(
+                                raw
+                        )
+                );
+            } catch (Exception e) {
+                log.error("Could not accept socket", e);
+                raw.close();
+            }
+        } catch (IOException ignore) {
+        }
+        // TODO("Stackoverflow 괜찮나?")
+        return this.accept();
     }
 
     public void close() {
@@ -62,11 +79,11 @@ public class SocketListeningPort implements Tagged {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof Port port) {
+        if (obj instanceof PortValue port) {
             return port.getPortNumber() == getPortNumber();
         }
 
-        if (obj instanceof SocketListeningPort port) {
+        if (obj instanceof HttpPort port) {
             return port.getPortNumber() == getPortNumber() && port.serverSocket == serverSocket;
         }
 

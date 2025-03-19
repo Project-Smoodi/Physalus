@@ -7,11 +7,8 @@ import org.smoodi.physalus.Tagged;
 import org.smoodi.physalus.engine.ListeningEngine;
 import org.smoodi.physalus.status.Stated;
 import org.smoodi.physalus.transfer.socket.HttpSocket;
-import org.smoodi.physalus.transfer.socket.JavaSocketUtils;
-import org.smoodi.physalus.transfer.socket.Socket;
 import org.smoodi.physalus.transfer.socket.SocketShutdownException;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -32,7 +29,7 @@ public class ServerRuntime implements PortContext, Stated {
     @Getter
     private State state = State.NONE;
 
-    private final Set<SocketListeningPort> ports = new HashSet<>();
+    private final Set<HttpPort> ports = new HashSet<>();
 
     private final ListeningEngine engine;
 
@@ -53,7 +50,7 @@ public class ServerRuntime implements PortContext, Stated {
 
         this.state = State.RUNNING;
 
-        log.info("Physalus Server started. ports: {}", ports.stream().map(SocketListeningPort::getPortNumber).toList());
+        log.info("Physalus Server started. ports: {}", ports.stream().map(HttpPort::getPortNumber).toList());
     }
 
     private void checkSetup() {
@@ -139,30 +136,30 @@ public class ServerRuntime implements PortContext, Stated {
 
         listeningThreads.forEach(Thread::interrupt);
 
-        ports.forEach(SocketListeningPort::close);
+        ports.forEach(HttpPort::close);
     }
 
     @Override
-    public boolean addPort(Port port) {
+    public boolean addPort(PortValue port) {
         setting();
         if (ports.stream().anyMatch(port::equals)) {
             return false;
         }
         if (!ALLOWED_TAGS.contains(port.getTag())) {
-            throw new IllegalArgumentException("Port number " + port.getPortNumber() + " with type \"" + port.getTag() + "\" is not allowed. Allowed port types: " + ALLOWED_TAGS);
+            throw new IllegalArgumentException("PortValue number " + port.getPortNumber() + " with type \"" + port.getTag() + "\" is not allowed. Allowed port types: " + ALLOWED_TAGS);
         }
-        ports.add(SocketListeningPort.of(port));
+        ports.add(HttpPort.of(port));
         return true;
     }
 
     @Override
     public boolean addPort(int port) {
         setting();
-        return addPort(new Port(port));
+        return addPort(new PortValue(port));
     }
 
     @Override
-    public boolean removePort(Port port) {
+    public boolean removePort(PortValue port) {
         setting();
         return ports.removeIf(port::equals);
     }

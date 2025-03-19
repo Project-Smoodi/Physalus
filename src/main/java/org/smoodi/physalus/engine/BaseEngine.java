@@ -2,7 +2,7 @@ package org.smoodi.physalus.engine;
 
 import lombok.Getter;
 import org.smoodi.physalus.engine.adapter.AdapterContext;
-import org.smoodi.physalus.engine.port.Port;
+import org.smoodi.physalus.engine.port.PortValue;
 import org.smoodi.physalus.engine.port.PortContext;
 import org.smoodi.physalus.status.Stated;
 
@@ -20,7 +20,7 @@ public abstract class BaseEngine
     protected abstract AdapterContext adapterContext();
 
     @Override
-    public boolean addPort(Port port) {
+    public boolean addPort(PortValue port) {
         return ported().addPort(port);
     }
 
@@ -30,7 +30,7 @@ public abstract class BaseEngine
     }
 
     @Override
-    public boolean removePort(Port port) {
+    public boolean removePort(PortValue port) {
         return ported().removePort(port);
     }
 
