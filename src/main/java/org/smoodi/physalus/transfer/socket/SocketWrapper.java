@@ -28,11 +28,7 @@ public class SocketWrapper implements IOStreamSocket {
 
     @Override
     public void close() {
-        try {
-            this.socket.close();
-        } catch (IOException e) {
-            log.error(e.getMessage(), e);
-        }
+        JavaSocketUtils.close(this.socket);
     }
 
     @Override
