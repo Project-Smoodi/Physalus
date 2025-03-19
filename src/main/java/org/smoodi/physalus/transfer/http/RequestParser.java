@@ -54,13 +54,13 @@ public final class RequestParser {
             temp.protocol = input[2];
 
             // /home/info ? "one=two&three=four"
-            if (pathParamsRaw[1] != null) {
+            if (pathParamsRaw.length > 1) {
                 temp.params = getParams(pathParamsRaw[1]);
             } else {
                 temp.params = Collections.emptyMap();
             }
         } catch (Exception e) {
-            throw new IllegalArgumentException("Invalid http message.");
+            throw new IllegalArgumentException("Invalid http message.", e);
         }
     }
 
