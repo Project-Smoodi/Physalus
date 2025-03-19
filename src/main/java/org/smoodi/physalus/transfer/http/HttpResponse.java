@@ -59,6 +59,8 @@ public interface HttpResponse extends Response {
 
     /**
      * Return status code of response.
+     * <p>
+     * If didn't {@link HttpResponse#setStatusCode(HttpStatus) set status code}, it will return {@link HttpStatus#OK 200 OK}.
      *
      * @return Status code of response.
      * @see HttpStatus

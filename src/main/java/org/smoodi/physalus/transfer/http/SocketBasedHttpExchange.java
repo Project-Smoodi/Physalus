@@ -92,7 +92,7 @@ public final class SocketBasedHttpExchange
 
         private final String address;
 
-        private HttpStatus statusCode;
+        private HttpStatus statusCode = HttpStatus.OK;
 
         private HttpHeaders headers = new MapHttpHeaders();
 
