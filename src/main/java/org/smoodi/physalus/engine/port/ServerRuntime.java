@@ -85,20 +85,12 @@ public class ServerRuntime implements PortContext, Stated {
                         return;
                     }
 
-                    try {
-                        var raw = port.accept();
-                        try {
-                            Socket socket = ProtocolBasedSocketWrapperFactory.wrap(raw, port.getTag());
+                    var socket = port.accept();
 
-                            if (socket instanceof HttpSocket socket1) {
-                                engine.doService(socket1, port.getTag());
-                            } else {
-                                socket.close();
-                            }
-                        } catch (IOException e) {
-                            JavaSocketUtils.close(raw);
-                        }
-                    } catch (IOException ignored) {
+                    if (socket instanceof HttpSocket socket1) {
+                        engine.doService(socket1, port.getTag());
+                    } else {
+                        socket.close();
                     }
                 }
             });
