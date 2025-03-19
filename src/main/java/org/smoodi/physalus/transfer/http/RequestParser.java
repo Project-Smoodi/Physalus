@@ -3,11 +3,13 @@ package org.smoodi.physalus.transfer.http;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.smoodi.annotation.array.UnmodifiableArray;
 import org.smoodi.physalus.transfer.Headers;
 import org.smoodi.physalus.transfer.socket.IOStreamSocket;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,33 +28,46 @@ public final class RequestParser {
 
         body(reader, temp);
 
+        url(reader, temp);
+
         return temp.toAvailable();
     }
 
     private static void major(BufferedReader reader, RequestTemp temp) throws IOException {
+        // [0] GET [1] /home/info?one=two&three=four [2] HTTP/1.1
         var input = reader.readLine().split(" ");
 
+        if (input.length != 3) {
+            throw new IllegalArgumentException("Invalid http message.");
+        }
+
+        // /home/info "?" one=two&three=four
+        var pathParamsRaw = input[1].split("\\?");
+
         if (!input[2].startsWith("HTTP")) {
-            throw new IllegalArgumentException("Not a HTTP request.");
+            throw new IllegalArgumentException("Invalid http message.");
         }
         try {
             temp.method = HttpMethod.valueOf(input[0]);
-            String[] pathParam = input[1].split("\\?");
-            temp.path = pathParam[0];
+            // "/home/info" ? one=two&three=four
+            temp.path = pathParamsRaw[0];
             temp.protocol = input[2];
 
-            if (pathParam[1] != null) {
-                temp.params = Map.copyOf(getParams(pathParam[1]));
+            // /home/info ? "one=two&three=four"
+            if (pathParamsRaw[1] != null) {
+                temp.params = getParams(pathParamsRaw[1]);
             } else {
-                temp.params = Map.of();
+                temp.params = Collections.emptyMap();
             }
         } catch (Exception e) {
-            throw new IllegalArgumentException("Not a HTTP request.", e);
+            throw new IllegalArgumentException("Invalid http message.");
         }
     }
 
+    @UnmodifiableArray
     private static Map<String, String> getParams(String paramString) {
-        Map<String, String> params = new HashMap<>();
+        Map<String, String> temp = new HashMap<>();
+
         for (String param : paramString.split("&")) {
             String[] keyValue = param.split("=");
             if (keyValue.length != 2) {
@@ -61,9 +76,9 @@ public final class RequestParser {
             if (keyValue[0].isBlank()) {
                 throw new IllegalArgumentException("One parameter's key in the request is invalid: \"" + param + "\"");
             }
-            params.put(keyValue[0], keyValue[1]);
+            temp.put(keyValue[0], keyValue[1]);
         }
-        return params;
+        return Map.copyOf(temp);
     }
 
     private static void headers(BufferedReader reader, RequestTemp temp) throws IOException {
@@ -102,7 +117,7 @@ public final class RequestParser {
         }
     }
 
-    private static void url(BufferedReader reader, RequestTemp temp) throws IOException {
+    private static void url(RequestTemp temp) {
         temp.host = temp.headers.get(HttpHeaderNames.HOST);
         temp.url = "url";
         temp.uri = temp.host + temp.path;
