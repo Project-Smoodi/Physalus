@@ -28,7 +28,7 @@ public final class RequestParser {
 
         body(reader, temp);
 
-        url(reader, temp);
+        url(temp);
 
         return temp.toAvailable();
     }
