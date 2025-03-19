@@ -3,16 +3,15 @@ package org.smoodi.physalus.engine.port;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.smoodi.annotation.NotNull;
-import org.smoodi.annotation.Nullable;
 import org.smoodi.physalus.Tagged;
 import org.smoodi.physalus.engine.ListeningEngine;
-import org.smoodi.physalus.transfer.http.HttpExchange;
-import org.smoodi.physalus.transfer.http.ResponseSender;
 import org.smoodi.physalus.status.Stated;
-import org.smoodi.physalus.transfer.socket.SocketWrapper;
+import org.smoodi.physalus.transfer.socket.HttpSocket;
+import org.smoodi.physalus.transfer.socket.JavaSocketUtils;
+import org.smoodi.physalus.transfer.socket.Socket;
+import org.smoodi.physalus.transfer.socket.SocketShutdownException;
 
 import java.io.IOException;
-import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -21,6 +20,11 @@ import java.util.concurrent.ThreadFactory;
 
 @Slf4j
 public class ServerRuntime implements PortContext, Stated {
+
+    private static final List<String> ALLOWED_TAGS = List.of(
+            Tagged.StandardTags.HTTP.value,
+            Tagged.StandardTags.HTTPS.value
+    );
 
     /**
      * <p>{@link State#NONE}, {@link State#SETTING}, {@link State#STARTING}, {@link State#RUNNING}, {@link State#STOPPING}, {@link State#STOPPED}</p>
@@ -84,24 +88,20 @@ public class ServerRuntime implements PortContext, Stated {
                         return;
                     }
 
-                    Socket socket = port.accept();
+                    try {
+                        var raw = port.accept();
+                        try {
+                            Socket socket = ProtocolBasedSocketWrapperFactory.wrap(raw, port.getTag());
 
-                    if (port.getTag().equals(Tagged.StandardTags.HTTP.value)
-                            || port.getTag().equals(Tagged.StandardTags.HTTPS.value)) {
-                        resolveHttpRequest(socket, new Port(port.getPortNumber(), port.getTag()));
-                    } else if (port.getTag().equals(Tagged.StandardTags.TCP.value)) {
-                        // TODO("TCP Request")
-                        try {
-                            socket.close();
+                            if (socket instanceof HttpSocket socket1) {
+                                engine.doService(socket1, port.getTag());
+                            } else {
+                                socket.close();
+                            }
                         } catch (IOException e) {
-                            throw new RuntimeException(e);
+                            JavaSocketUtils.close(raw);
                         }
-                    } else {
-                        try {
-                            socket.close();
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
+                    } catch (IOException ignored) {
                     }
                 }
             });
@@ -111,62 +111,19 @@ public class ServerRuntime implements PortContext, Stated {
         });
     }
 
-    private void resolveHttpRequest(Socket arg, Port port) {
-        SocketWrapper socket = new SocketWrapper(arg);
-
-        log.debug("Received connection from port {}. Socket@{}", port.getPortNumber(), socket.hashCode());
-
-        try {
-            socket.getInput().mark(5);
-            if (socket.getInput().read() == -1) {
-                socket.get().close();
-                log.debug("Not a http message received on HTTP Server port({}). Socket@{}", port.getPortNumber(), socket.hashCode());
-                return;
-            } else {
-                socket.getInput().reset();
-            }
-        } catch (IOException e) {
-            log.error(e.getMessage(), e);
-        }
-
-        log.debug("The request passed to engine. Socket@{}", socket.hashCode());
-        engine.doService(socket, port.getTag());
-    }
-
-    public void response(@Nullable HttpExchange exchange, @NotNull SocketWrapper socket) {
+    public void response(@NotNull HttpSocket socket) {
         assert socket != null;
 
-        try {
-            if (socket.get().isClosed()) {
-                return;
-            }
-
-            if (socket.get().isOutputShutdown() || !socket.get().isConnected()) {
-                socket.get().close();
-            }
-        } catch (IOException e) {
-            log.error(e.getMessage(), e);
+        if (socket.isClosed()) {
+            return;
         }
 
         try {
-            if (exchange == null) {
-                ResponseSender.sendInternalServerError(socket);
-            } else {
-                ResponseSender.send(socket, exchange.getResponse());
-            }
-        } catch (IOException e) {
+            socket.doResponse();
+        } catch (SocketShutdownException e) {
             log.error(e.getMessage(), e);
-            try {
-                ResponseSender.sendInternalServerError(socket);
-            } catch (IOException ex) {
-                log.error(ex.getMessage(), ex);
-            }
         } finally {
-            try {
-                socket.get().close();
-            } catch (IOException e) {
-                log.error(e.getMessage(), e);
-            }
+            socket.close();
         }
     }
 
@@ -190,6 +147,9 @@ public class ServerRuntime implements PortContext, Stated {
         setting();
         if (ports.stream().anyMatch(port::equals)) {
             return false;
+        }
+        if (!ALLOWED_TAGS.contains(port.getTag())) {
+            throw new IllegalArgumentException("Port number " + port.getPortNumber() + " with type \"" + port.getTag() + "\" is not allowed. Allowed port types: " + ALLOWED_TAGS);
         }
         ports.add(SocketListeningPort.of(port));
         return true;

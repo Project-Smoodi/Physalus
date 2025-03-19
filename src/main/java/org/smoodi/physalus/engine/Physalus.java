@@ -8,9 +8,8 @@ import org.smoodi.physalus.engine.adapter.AdapterContext;
 import org.smoodi.physalus.engine.adapter.PhysalusAdapterManager;
 import org.smoodi.physalus.engine.port.PortContext;
 import org.smoodi.physalus.engine.port.ServerRuntime;
-import org.smoodi.physalus.transfer.socket.SocketWrapper;
 import org.smoodi.physalus.transfer.http.HttpExchange;
-import org.smoodi.physalus.transfer.http.SocketBasedHttpExchange;
+import org.smoodi.physalus.transfer.socket.HttpSocket;
 
 import java.time.LocalDateTime;
 import java.util.concurrent.ThreadFactory;
@@ -63,13 +62,12 @@ public class Physalus
     }
 
     @Override
-    public void doService(SocketWrapper socket, String tag) {
+    public void doService(HttpSocket socket, String tag) {
         threadFactory.newThread(() -> {
             HttpExchange exchange = null;
             try {
                 // TODO("요청에 대한 처리")
-                exchange = SocketBasedHttpExchange.of(socket);
-
+                exchange = socket.getExchange();
                 mainController(exchange, tag);
 
                 log.debug("Application processing finished. Socket@{}", socket.hashCode());
@@ -77,7 +75,7 @@ public class Physalus
                 log.error(e.getMessage(), e);
             }
 
-            serverRuntime.response(exchange, socket);
+            serverRuntime.response(socket);
         }).start();
     }
 

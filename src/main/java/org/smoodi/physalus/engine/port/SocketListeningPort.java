@@ -43,12 +43,8 @@ public class SocketListeningPort implements Tagged {
         return serverSocket.isBound();
     }
 
-    public Socket accept() {
-        try {
-            return serverSocket.accept();
-        } catch (IOException e) {
-            throw new IllegalArgumentException("Could not accept connection: " + e.getMessage());
-        }
+    public Socket accept() throws IOException {
+        return serverSocket.accept();
     }
 
     public void close() {

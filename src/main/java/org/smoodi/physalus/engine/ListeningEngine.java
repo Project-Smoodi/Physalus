@@ -1,8 +1,8 @@
 package org.smoodi.physalus.engine;
 
-import org.smoodi.physalus.transfer.socket.SocketWrapper;
+import org.smoodi.physalus.transfer.socket.HttpSocket;
 
 public interface ListeningEngine {
 
-    void doService(SocketWrapper socket, String tag);
+    void doService(HttpSocket socket, String tag);
 }
