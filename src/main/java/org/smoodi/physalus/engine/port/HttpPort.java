@@ -87,12 +87,12 @@ public class HttpPort implements Port {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof PortValue port) {
-            return port.getPortNumber() == getPortNumber();
-        }
-
         if (obj instanceof HttpPort port) {
             return port.getPortNumber() == getPortNumber() && port.serverSocket == serverSocket;
+        }
+
+        if (obj instanceof Port port) {
+            return port.getPortNumber() == getPortNumber();
         }
 
         return false;
