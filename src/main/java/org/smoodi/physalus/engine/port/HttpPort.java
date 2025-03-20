@@ -3,12 +3,12 @@ package org.smoodi.physalus.engine.port;
 import lombok.extern.slf4j.Slf4j;
 import org.smoodi.annotation.NotNull;
 import org.smoodi.physalus.transfer.socket.HttpSocketWrapper;
+import org.smoodi.physalus.transfer.socket.IOStreamSocket;
 import org.smoodi.physalus.transfer.socket.Socket;
 import org.smoodi.physalus.transfer.socket.SocketWrapper;
 
 import java.io.IOException;
 import java.net.ServerSocket;
-
 
 @Slf4j
 public class HttpPort implements Port {
@@ -45,23 +45,31 @@ public class HttpPort implements Port {
     }
 
     public Socket accept() {
-        try {
-            java.net.Socket raw = serverSocket.accept();
-
+        while (true) {
             try {
-                return new HttpSocketWrapper(
-                        new SocketWrapper(
-                                raw
-                        )
-                );
-            } catch (Exception e) {
-                log.error("Could not accept socket", e);
-                raw.close();
+                java.net.Socket raw = serverSocket.accept();
+                IOStreamSocket socket = new SocketWrapper(raw);
+
+                { // Check it is http request stream or not
+                    socket.getInput().mark(1);
+                    if (socket.getInput().read() == -1) {
+                        socket.close();
+                        continue;
+                    } else {
+                        socket.getInput().reset();
+                    }
+                }
+
+                try { // Try parsing request
+                    return new HttpSocketWrapper(socket);
+                } catch (Exception e) {
+                    log.error("Could not accept socket", e);
+                    raw.close();
+                }
+            } catch (IOException ignore) {
             }
-        } catch (IOException ignore) {
+            // TODO("Stackoverflow 괜찮나?")
         }
-        // TODO("Stackoverflow 괜찮나?")
-        return this.accept();
     }
 
     public void close() {
