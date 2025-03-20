@@ -29,7 +29,7 @@ public class ServerRuntime implements PortContext, Stated {
     @Getter
     private State state = State.NONE;
 
-    private final Set<HttpPort> ports = new HashSet<>();
+    private final Set<Port> ports = new HashSet<>();
 
     private final ListeningEngine engine;
 
@@ -50,7 +50,7 @@ public class ServerRuntime implements PortContext, Stated {
 
         this.state = State.RUNNING;
 
-        log.info("Physalus Server started. ports: {}", ports.stream().map(HttpPort::getPortNumber).toList());
+        log.info("Physalus Server started. ports: {}", ports.stream().map(Port::getPortNumber).toList());
     }
 
     private void checkSetup() {
@@ -128,7 +128,7 @@ public class ServerRuntime implements PortContext, Stated {
 
         listeningThreads.forEach(Thread::interrupt);
 
-        ports.forEach(HttpPort::close);
+        ports.forEach(Port::close);
     }
 
     @Override
