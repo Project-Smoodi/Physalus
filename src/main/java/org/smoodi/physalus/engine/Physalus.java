@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.smoodi.physalus.LoggerConfiguration;
 import org.smoodi.physalus.engine.adapter.AdapterContext;
 import org.smoodi.physalus.engine.adapter.PhysalusAdapterManager;
 import org.smoodi.physalus.engine.port.PortContext;
@@ -43,6 +44,8 @@ public class Physalus
         if (engine == null) {
             engine = new Physalus();
         }
+
+        LoggerConfiguration.configureLogback();
 
         return engine;
     }
