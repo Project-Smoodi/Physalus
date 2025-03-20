@@ -2,6 +2,8 @@ package org.smoodi.physalus.transfer;
 
 import lombok.AllArgsConstructor;
 
+import java.util.List;
+
 @AllArgsConstructor
 public enum StandardPorts {
 
@@ -46,4 +48,7 @@ public enum StandardPorts {
     public final int portNumber;
 
     public final String name;
+
+    public static final List<StandardPorts> HTTP_PORTS = List.of(HTTP, HTTP_, HTTPS);
+    public static final List<Integer> HTTP_PORTS_VALUES = List.of(HTTP.portNumber, HTTP_.portNumber, HTTPS.portNumber);
 }

@@ -30,7 +30,7 @@ public class Physalus
     private final ThreadFactory threadFactory = Thread.ofVirtual().name("request-resolver-", 0).factory();
 
     @Override
-    protected PortContext ported() {
+    protected PortContext portContext() {
         return serverRuntime;
     }
 

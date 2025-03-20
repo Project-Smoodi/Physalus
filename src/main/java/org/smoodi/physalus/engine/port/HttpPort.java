@@ -1,7 +1,10 @@
 package org.smoodi.physalus.engine.port;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.smoodi.annotation.NotNull;
+import org.smoodi.annotation.StaticFactoryMethod;
+import org.smoodi.physalus.transfer.StandardPorts;
 import org.smoodi.physalus.transfer.socket.HttpSocketWrapper;
 import org.smoodi.physalus.transfer.socket.IOStreamSocket;
 import org.smoodi.physalus.transfer.socket.Socket;
@@ -13,31 +16,38 @@ import java.net.ServerSocket;
 @Slf4j
 public class HttpPort implements Port {
 
-    private final PortValue value;
+    @NotNull
+    @Getter(onMethod_ = {@Override})
+    private final int portNumber;
+
+    @NotNull
+    @Getter(onMethod_ = {@Override})
+    private final String tag;
 
     @NotNull
     private final ServerSocket serverSocket;
 
-    public HttpPort(PortValue port) {
-        this.value = port;
+    public HttpPort(int portNumber) {
+        if (portNumber == StandardPorts.HTTP.portNumber || portNumber == StandardPorts.HTTP_.portNumber) {
+            this.tag = StandardTags.HTTP.value;
+        } else if (portNumber == StandardPorts.HTTPS.portNumber) {
+            this.tag = StandardTags.HTTPS.value;
+        } else {
+            throw new IllegalArgumentException("Invalid port number: " + portNumber + "; Only HTTP and HTTPS are supported.");
+        }
+        this.portNumber = portNumber;
+
         try {
-            this.serverSocket = new ServerSocket(port.getPortNumber());
+            this.serverSocket = new ServerSocket(portNumber);
+            log.debug("{} socket is anchored on number {}", this.tag, portNumber);
         } catch (IOException e) {
-            throw new IllegalArgumentException("Could not listen on port: " + port.getPortNumber(), e);
+            throw new IllegalArgumentException("Could not listen on port: " + portNumber, e);
         }
     }
 
-    public static HttpPort of(PortValue port) {
-        return new HttpPort(port);
-    }
-
-    @Override
-    public String getTag() {
-        return value.getTag();
-    }
-
-    public int getPortNumber() {
-        return value.getPortNumber();
+    @StaticFactoryMethod
+    public static HttpPort of(int portNumber) {
+        return new HttpPort(portNumber);
     }
 
     public boolean isBound() {

@@ -78,7 +78,7 @@ public class ServerRuntime implements PortContext, Stated {
     private void doListening() {
         ports.forEach(port -> {
             final Thread thread = factory.newThread(() -> {
-                log.warn("Listening on port {}", port.getPortNumber());
+                log.info("Listening on port {}", port.getPortNumber());
 
                 while (true) {
                     if (Thread.interrupted()) {
@@ -132,7 +132,7 @@ public class ServerRuntime implements PortContext, Stated {
     }
 
     @Override
-    public boolean addPort(PortValue port) {
+    public boolean addPort(Port port) {
         setting();
         if (ports.stream().anyMatch(port::equals)) {
             return false;
@@ -140,18 +140,19 @@ public class ServerRuntime implements PortContext, Stated {
         if (!ALLOWED_TAGS.contains(port.getTag())) {
             throw new IllegalArgumentException("PortValue number " + port.getPortNumber() + " with type \"" + port.getTag() + "\" is not allowed. Allowed port types: " + ALLOWED_TAGS);
         }
-        ports.add(HttpPort.of(port));
+
+        this.ports.add(port);
         return true;
     }
 
     @Override
     public boolean addPort(int port) {
         setting();
-        return addPort(new PortValue(port));
+        return addPort(HttpPort.of(port));
     }
 
     @Override
-    public boolean removePort(PortValue port) {
+    public boolean removePort(Port port) {
         setting();
         return ports.removeIf(port::equals);
     }
