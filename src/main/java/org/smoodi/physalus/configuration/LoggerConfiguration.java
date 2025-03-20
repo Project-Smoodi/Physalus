@@ -1,4 +1,4 @@
-package org.smoodi.physalus;
+package org.smoodi.physalus.configuration;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
@@ -6,28 +6,26 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.ConsoleAppender;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import org.slf4j.LoggerFactory;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-public final class LoggerConfiguration {
+public final class LoggerConfiguration implements Configuration {
 
-    private static final LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
+    private final LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
 
-    private static boolean initialized = false;
+    private boolean initialized = false;
 
-    public static void configureLogback() {
+    @Override
+    public void config() {
         if (initialized) {
             return;
         }
 
-        configureDefault();
+        configure0();
 
         initialized = true;
     }
 
-    private static void configureDefault() {
+    private void configure0() {
         ConsoleAppender<ILoggingEvent> consoleAppender = new ConsoleAppender<>();
         consoleAppender.setContext(context);
 

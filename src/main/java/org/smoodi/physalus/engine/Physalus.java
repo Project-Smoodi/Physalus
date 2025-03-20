@@ -4,7 +4,8 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.smoodi.physalus.LoggerConfiguration;
+import org.smoodi.physalus.configuration.Configuration;
+import org.smoodi.physalus.configuration.ConfigurationComposite;
 import org.smoodi.physalus.engine.adapter.AdapterContext;
 import org.smoodi.physalus.engine.adapter.PhysalusAdapterManager;
 import org.smoodi.physalus.engine.port.PortContext;
@@ -30,6 +31,8 @@ public class Physalus
 
     private final ThreadFactory threadFactory = Thread.ofVirtual().name("request-resolver-", 0).factory();
 
+    private final Configuration config = new ConfigurationComposite();
+
     @Override
     protected PortContext portContext() {
         return serverRuntime;
@@ -45,7 +48,7 @@ public class Physalus
             engine = new Physalus();
         }
 
-        LoggerConfiguration.configureLogback();
+        engine.config.config();
 
         return engine;
     }
