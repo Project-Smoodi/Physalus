@@ -1,13 +1,9 @@
 package org.smoodi.physalus.transfer.socket;
 
-import org.smoodi.physalus.transfer.http.HttpExchange;
-import org.smoodi.physalus.transfer.http.HttpRequest;
-import org.smoodi.physalus.transfer.http.HttpResponse;
-import org.smoodi.physalus.transfer.http.SocketBasedHttpExchange;
+import org.smoodi.physalus.transfer.http.*;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.util.Map;
 
 public class HttpSocketWrapper implements HttpSocket {
 
@@ -47,17 +43,7 @@ public class HttpSocketWrapper implements HttpSocket {
         response.finish();
 
         try {
-            writer.write(PROTOCOL + " " + response.getStatusCode().status + " " + response.getStatusCode().reason + "\r\n");
-            for (Map.Entry<String, String> entry : response.getHeaders().toMap().entrySet()) {
-                writer.write(entry.getKey() + ": " + entry.getValue() + "\r\n");
-            }
-            if (response.getContent() != null) {
-                writer.write("\r\n");
-                writer.write(response.getContent().toString() + "\r\n");
-            }
-
-            writer.write("\r\n");
-
+            writer.write(ResponseSerializer.serialize(response));
             writer.flush();
             writer.close();
         } catch (IOException e) {
