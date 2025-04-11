@@ -100,7 +100,7 @@ public interface HttpResponse extends Response {
      * @param address The address of client, for create empty response object.
      * @return New HTTP response value object.
      */
-    static HttpResponse of(@NotNull String address) {
+    static HttpResponse withAddress(@NotNull String address) {
         return AbstractHttpResponse.Default.withAddress(address);
     }
 }
