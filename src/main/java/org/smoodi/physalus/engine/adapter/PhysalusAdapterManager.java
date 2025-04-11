@@ -19,7 +19,7 @@ public class PhysalusAdapterManager implements AdapterContext {
         }
 
         adapters.add(adapter);
-        return false;
+        return true;
     }
 
     @Override
