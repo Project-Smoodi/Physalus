@@ -44,7 +44,7 @@ public interface HttpResponse extends Response {
     @Override
     Object getContent();
 
-    void json(@NotNull Object valueObject);
+    HttpResponse json(@NotNull Object valueObject);
 
     /**
      * <p>Return headers of response.</p>
@@ -68,10 +68,30 @@ public interface HttpResponse extends Response {
     @NotNull
     HttpStatus getStatusCode();
 
-    void setStatusCode(@NotNull HttpStatus status);
+    /**
+     * <p>Set status code of Response, and return {@code this} for method chaining.</p>
+     *
+     * @param status Status code
+     * @return {@code this}
+     */
+    HttpResponse setStatusCode(@NotNull HttpStatus status);
+
+    /**
+     * <p>Set content of Response, and return {@code this} for method chaining.</p>
+     *
+     * @param content      Content
+     * @param contentType Type of content on parameter
+     * @return {@code this}
+     */
+    HttpResponse setContent(@Nullable Object content, @Nullable ContentType contentType);
 
     // TODO("내가 만든 Cookie")
 
+    /**
+     * <p>Finalize response, and freezing.</p>
+     *
+     * <p>Set HTTP standard headers, make desultory data to correctly, etc.</p>
+     */
     void finish();
 
     /**

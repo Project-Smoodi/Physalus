@@ -47,6 +47,8 @@ public abstract class AbstractHttpResponse implements HttpResponse {
         checkFrozen();
 
         this.statusCode = statusCode;
+
+        return this;
     }
 
     @Override
@@ -57,7 +59,17 @@ public abstract class AbstractHttpResponse implements HttpResponse {
     }
 
     @Override
-    public void json(@NotNull Object valueObject) {
+    public HttpResponse setContent(Object content, ContentType contentType) {
+        checkFrozen();
+
+        this.content = content;
+        getHeaders().set(HttpHeaderNames.CONTENT_TYPE, contentType.value);
+
+        return this;
+    }
+
+    @Override
+    public HttpResponse json(@NotNull Object valueObject) {
         checkFrozen();
 
         if (valueObject == null) {
@@ -65,6 +77,8 @@ public abstract class AbstractHttpResponse implements HttpResponse {
         }
         this.content = valueObject;
         this.headers.set(HttpHeaderNames.CONTENT_TYPE, ContentType.APPLICATION_JSON.value);
+
+        return this;
     }
 
     @Override
