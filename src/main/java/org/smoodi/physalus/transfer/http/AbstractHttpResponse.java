@@ -18,8 +18,8 @@ import java.util.Objects;
  *     <li>2. Finalization progress for HTTP Standards</li>
  * </ul>
  *
- * @since v0.1.0 ALPHA
  * @author Daybreak312
+ * @since v0.1.0 ALPHA
  */
 @Getter
 public abstract class AbstractHttpResponse implements HttpResponse {
@@ -111,6 +111,17 @@ public abstract class AbstractHttpResponse implements HttpResponse {
     private void checkFrozen() {
         if (finish) {
             throw new UnsupportedOperationException("Cannot modify response, Response is frozen.");
+        }
+    }
+
+    public static final class Default extends AbstractHttpResponse {
+
+        public Default(String address) {
+            super(address);
+        }
+
+        public static HttpResponse withAddress(String address) {
+            return new Default(address);
         }
     }
 }
