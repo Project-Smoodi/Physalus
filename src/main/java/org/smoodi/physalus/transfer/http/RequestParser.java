@@ -155,7 +155,7 @@ public final class RequestParser {
         }
 
         public HttpRequest toAvailable() {
-            return new SocketBasedHttpExchange.Request(address, url, uri, host, path, protocol, method, port, params, headers, content);
+            return new AbstractHttpRequest.Default(address, url, uri, host, path, protocol, method, port, params, headers, content);
         }
     }
 }

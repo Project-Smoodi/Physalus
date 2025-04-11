@@ -33,7 +33,7 @@ public final class SocketBasedHttpExchange
         this.socket = socket;
 
         this.request = RequestParser.parse(socket);
-        this.response = new Response(this.request.getAddress());
+        this.response = HttpResponse.of(this.request.getAddress());
     }
 
     public static HttpExchange of(IOStreamSocket socket) throws IOException {

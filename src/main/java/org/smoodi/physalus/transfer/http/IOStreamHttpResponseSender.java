@@ -17,7 +17,7 @@ public final class IOStreamHttpResponseSender {
         try {
             socket.getOutput().write(
                     ResponseSerializer.serialize(
-                            new SocketBasedHttpExchange.Response(
+                            HttpResponse.of(
                                     socket.toNative().getRemoteSocketAddress().toString()
                             )
                     )
