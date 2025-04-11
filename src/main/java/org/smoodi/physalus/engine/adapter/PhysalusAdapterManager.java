@@ -14,30 +14,16 @@ public class PhysalusAdapterManager implements AdapterContext {
 
     @Override
     public boolean addAdapter(Adapter adapter) {
-        if (adapters.contains(adapter)) {
-            return false;
-        }
-
-        adapters.add(adapter);
-        return true;
+        return adapters.add(adapter);
     }
 
     @Override
     public boolean removeAdapter(Adapter adapter) {
-        if (adapters.contains(adapter)) {
-            adapters.remove(adapter);
-            return true;
-        }
-
-        return false;
+        return adapters.remove(adapter);
     }
 
     @Override
     public boolean removeAdapter(String tag) {
-        if (adapters.isEmpty()) {
-            return false;
-        }
-
         return adapters.removeIf(it -> it.getTag().contains(tag));
     }
 }
