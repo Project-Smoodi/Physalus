@@ -119,6 +119,23 @@ public abstract class AbstractHttpResponse implements HttpResponse {
                     throw new IllegalArgumentException("Content type not configured.");
                 }
             }
+
+
+            if (HttpUtils.isError(this.statusCode)) {
+                if (Objects.equals(this.headers.contentType(), ContentType.APPLICATION_JSON.value)) {
+                    this.headers.set(HttpHeaderNames.CONTENT_TYPE, ContentType.APPLICATION_PROBLEM_JSON.value);
+                } else if (Objects.equals(this.headers.contentType(), ContentType.APPLICATION_XML.value)) {
+                    this.headers.set(HttpHeaderNames.CONTENT_TYPE, ContentType.APPLICATION_PROBLEM_XML.value);
+                }
+            } else if (HttpUtils.isSuccess(this.statusCode)) {
+                if (Objects.equals(this.headers.contentType(), ContentType.APPLICATION_PROBLEM_JSON.value)) {
+                    this.headers.set(HttpHeaderNames.CONTENT_TYPE, ContentType.APPLICATION_JSON.value);
+                } else if (Objects.equals(this.headers.contentType(), ContentType.APPLICATION_PROBLEM_XML.value)) {
+                    this.headers.set(HttpHeaderNames.CONTENT_TYPE, ContentType.APPLICATION_XML.value);
+                }
+            }
+        } else {
+            this.headers.set(HttpHeaderNames.CONTENT_TYPE, null);
         }
 
         this.headers = new UnmodifiableMapHttpHeaders(headers);
