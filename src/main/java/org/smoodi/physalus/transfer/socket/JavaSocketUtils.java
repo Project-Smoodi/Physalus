@@ -10,10 +10,6 @@ import java.net.Socket;
 public final class JavaSocketUtils {
 
     public static void close(Socket socket) {
-        if (socket.isClosed() || !socket.isConnected() || !socket.isBound()) {
-            return;
-        }
-
         try {
             socket.close();
         } catch (IOException ignored) {
