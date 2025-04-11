@@ -17,6 +17,9 @@ public enum ContentType {
     APPLICATION_XML("application/xml"),
     APPLICATION_OCTET_STREAM("application/octet-stream"),
 
+    APPLICATION_PROBLEM_JSON("application/problem+json"),
+    APPLICATION_PROBLEM_XML("application/problem+xml"),
+
     TEXT_HTML("text/html"),
     TEXT_CSS("text/css"),
     TEXT_JAVASCRIPT("text/javascript"),
