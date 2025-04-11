@@ -36,7 +36,9 @@ public abstract class AbstractHttpResponse implements HttpResponse {
 
     private Object content = null;
 
-    public AbstractHttpResponse(String address) {
+    public AbstractHttpResponse(@NotNull String address) {
+        assert address != null;
+
         this.address = address;
     }
 
@@ -116,11 +118,11 @@ public abstract class AbstractHttpResponse implements HttpResponse {
 
     public static final class Default extends AbstractHttpResponse {
 
-        public Default(String address) {
+        public Default(@NotNull String address) {
             super(address);
         }
 
-        public static HttpResponse withAddress(String address) {
+        public static HttpResponse withAddress(@NotNull String address) {
             return new Default(address);
         }
     }

@@ -73,4 +73,14 @@ public interface HttpResponse extends Response {
     // TODO("내가 만든 Cookie")
 
     void finish();
+
+    /**
+     * <p>Create general HTTP response value object.</p>
+     *
+     * @param address The address of client, for create empty response object.
+     * @return New HTTP response value object.
+     */
+    static HttpResponse of(@NotNull String address) {
+        return AbstractHttpResponse.Default.withAddress(address);
+    }
 }
