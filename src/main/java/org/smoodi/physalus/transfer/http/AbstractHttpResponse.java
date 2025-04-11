@@ -82,16 +82,16 @@ public abstract class AbstractHttpResponse implements HttpResponse {
     }
 
     @Override
-    public void finish() {
+    public void finalization() {
         if (this.finish)
             return;
         this.finish = true;
 
-        finishContent();
-        finishHeader();
+        finalizationContent();
+        finalizationHeader();
     }
 
-    private void finishContent() {
+    private void finalizationContent() {
         if (this.content == null) return;
 
         if (Objects.equals(this.headers.contentType(), ContentType.APPLICATION_JSON.value)) {
@@ -103,7 +103,7 @@ public abstract class AbstractHttpResponse implements HttpResponse {
         }
     }
 
-    private void finishHeader() {
+    private void finalizationHeader() {
         // TODO("Keep-Alive 구현 후 제거")
         this.headers.set(HttpHeaderNames.CONNECTION, "close");
 

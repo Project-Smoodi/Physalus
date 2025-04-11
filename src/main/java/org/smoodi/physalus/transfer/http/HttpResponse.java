@@ -92,7 +92,7 @@ public interface HttpResponse extends Response {
      *
      * <p>Set HTTP standard headers, make desultory data to correctly, etc.</p>
      */
-    void finish();
+    void finalization();
 
     /**
      * <p>Create general HTTP response value object.</p>

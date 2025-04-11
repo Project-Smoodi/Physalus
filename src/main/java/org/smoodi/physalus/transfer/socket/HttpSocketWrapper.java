@@ -40,7 +40,7 @@ public class HttpSocketWrapper implements HttpSocket {
         var writer = this.socket.getOutput();
         var response = this.exchange.getResponse();
 
-        response.finish();
+        response.finalization();
 
         try {
             writer.write(ResponseSerializer.serialize(response));
