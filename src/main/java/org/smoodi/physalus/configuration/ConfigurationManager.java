@@ -7,7 +7,10 @@ public class ConfigurationManager implements Configuration {
 
     private static final List<Configuration> configurations = new ArrayList<>();
 
-    public static void addConfiguration(final Configuration configuration) {
+    public static void applyConfiguration(final Configuration configuration) {
+        var config = configurations.stream().filter(it -> it.getClass() == configuration.getClass()).findFirst();
+        config.ifPresent(configurations::remove);
+        
         configurations.add(configuration);
     }
 
