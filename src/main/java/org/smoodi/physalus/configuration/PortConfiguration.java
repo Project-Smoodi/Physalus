@@ -11,7 +11,7 @@ import java.util.Map;
  * @author Daybreak312
  * @since v0.1.0 ALPHA
  */
-public class PortConfiguration implements Configuration {
+public class PortConfiguration implements SetupConfiguration {
 
     private static Map<Integer, String> ports = new HashMap<>();
 

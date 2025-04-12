@@ -9,7 +9,7 @@ import ch.qos.logback.core.ConsoleAppender;
 import lombok.Setter;
 import org.slf4j.LoggerFactory;
 
-public final class LoggerConfiguration implements Configuration {
+public final class LoggerConfiguration implements SetupConfiguration {
 
     private final LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
 
