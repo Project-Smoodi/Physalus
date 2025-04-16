@@ -64,13 +64,13 @@ publishing {
             from(components["java"])
 
             groupId = "org.smoodi.framework"
-            artifactId = "smoodi-physalus"
+            artifactId = "physalus"
             version = "0.0.1-ALPHA"
 
             pom {
                 name.set("Physalus The Engine")
                 description.set("The server engine for Smoodi Framework.")
-                url.set("https://github.com/Project-Smoodi/Smoodi-Physalus")
+                url.set("https://github.com/Project-Smoodi/Physalus")
 
                 licenses {
                     license {
@@ -88,9 +88,9 @@ publishing {
                 }
 
                 scm {
-                    connection.set("scm:git:git://github.com/Project-Smoodi/Smoodi-Physalus.git")
-                    developerConnection.set("scm:git:ssh://git@github.com:Project-Smoodi/Smoodi-Physalus.git")
-                    url.set("https://github.com/Project-Smoodi/Smoodi-Physalus")
+                    connection.set("scm:git:git://github.com/Project-Smoodi/Physalus.git")
+                    developerConnection.set("scm:git:ssh://git@github.com:Project-Smoodi/Physalus.git")
+                    url.set("https://github.com/Project-Smoodi/Physalus")
                 }
             }
         }
@@ -99,7 +99,7 @@ publishing {
     repositories {
         maven {
             name = "Smoodi-Physalus"
-            url = uri("https://maven.pkg.github.com/Project-Smoodi/Smoodi-Physalus")
+            url = uri("https://maven.pkg.github.com/Project-Smoodi/Physalus")
             credentials {
                 username = project.findProperty("gpr.user") as String? ?: System.getenv("USERNAME")
                 password = project.findProperty("gpr.token") as String? ?: System.getenv("TOKEN")
