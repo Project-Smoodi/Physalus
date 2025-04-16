@@ -3,7 +3,9 @@ package org.smoodi.physalus.engine.adapter;
 import org.smoodi.annotation.NotNull;
 import org.smoodi.physalus.transfer.Exchange;
 
-import java.util.*;
+import java.util.LinkedHashSet;
+import java.util.Objects;
+import java.util.Set;
 
 public class PhysalusAdapterManager implements AdapterContext {
 
@@ -16,6 +18,7 @@ public class PhysalusAdapterManager implements AdapterContext {
         for (Adapter adapter : adapters) {
             if (Objects.equals(adapter.getTag(), tag)) {
                 adapter.execute(exchange);
+                return;
             }
         }
     }
