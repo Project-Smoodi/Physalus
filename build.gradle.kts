@@ -4,7 +4,7 @@ plugins {
     id("maven-publish")
 }
 
-group = "org.smoodi.web"
+group = "org.smoodi.physalus"
 
 repositories {
     maven {
@@ -30,7 +30,7 @@ dependencies {
 
     // Logger
     api("org.slf4j:slf4j-api:2.0.9")
-    implementation("ch.qos.logback:logback-core:1.4.14")
+    implementation("ch.qos.logback:logback-core:1.5.13")
     implementation("ch.qos.logback:logback-classic:1.4.14")
 
     // Lombok
@@ -68,7 +68,7 @@ publishing {
             version = "0.0.1-ALPHA"
 
             pom {
-                name.set("Smoodi Server Engine Physalus")
+                name.set("Physalus The Engine")
                 description.set("The server engine for Smoodi Framework.")
                 url.set("https://github.com/Project-Smoodi/Smoodi-Physalus")
 
