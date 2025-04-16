@@ -9,7 +9,7 @@ group = "org.smoodi.physalus"
 repositories {
     maven {
         name = "GitHubPackages"
-        url = uri("https://maven.pkg.github.com/Project-Smoodi/Smoodi-Core")
+        url = uri("https://maven.pkg.github.com/Project-Smoodi/Physalus")
         credentials {
             username = project.findProperty("gpr.user") as String? ?: System.getenv("USERNAME")
             password = project.findProperty("gpr.token") as String? ?: System.getenv("TOKEN")
@@ -65,7 +65,7 @@ publishing {
 
             groupId = "org.smoodi.framework"
             artifactId = "physalus"
-            version = "0.0.1-ALPHA"
+            version = "0-TEMP"
 
             pom {
                 name.set("Physalus The Engine")
