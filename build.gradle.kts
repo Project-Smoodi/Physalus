@@ -57,6 +57,11 @@ tasks.withType<JavaCompile> {
     )
 }
 
+tasks.register<Jar>("sourcesJar") {
+    archiveClassifier.set("sources")
+    from(sourceSets["main"].allSource)
+}
+
 publishing {
 
     publications {
@@ -65,7 +70,7 @@ publishing {
 
             groupId = "org.smoodi.framework"
             artifactId = "physalus"
-            version = "0-TEMP"
+            version = "0.0.1-SNAPSHOT"
 
             pom {
                 name.set("Physalus The Engine")
