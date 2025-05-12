@@ -7,6 +7,7 @@ import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.ConsoleAppender;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.LoggerFactory;
 
 public final class LoggerConfiguration implements SetupConfiguration {

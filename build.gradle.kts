@@ -31,7 +31,7 @@ dependencies {
     // Logger
     api("org.slf4j:slf4j-api:2.0.9")
     implementation("ch.qos.logback:logback-core:1.5.13")
-    implementation("ch.qos.logback:logback-classic:1.4.14")
+    implementation("ch.qos.logback:logback-classic:1.5.13")
 
     // Lombok
     compileOnly("org.projectlombok:lombok:1.18.30")
@@ -88,7 +88,7 @@ publishing {
                     developer {
                         id.set("Daybreak312")
                         name.set("Daybreak312")
-                        email.set("ty82afg12@gmail.com")
+                        email.set("leetyxodud312@gmail.com")
                     }
                 }
 

@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.smoodi.annotation.NotNull;
 import org.smoodi.physalus.Tagged;
+import org.smoodi.physalus.engine.HttpServer;
 import org.smoodi.physalus.engine.ListeningEngine;
 import org.smoodi.physalus.status.Stated;
 import org.smoodi.physalus.transfer.socket.HttpSocket;
@@ -16,7 +17,7 @@ import java.util.Set;
 import java.util.concurrent.ThreadFactory;
 
 @Slf4j
-public class ServerRuntime implements PortContext, Stated {
+public class HttpServerImpl implements PortContext, Stated, HttpServer {
 
     private static final List<String> ALLOWED_TAGS = List.of(
             Tagged.StandardTags.HTTP.value,
@@ -35,22 +36,38 @@ public class ServerRuntime implements PortContext, Stated {
 
     private final ThreadFactory factory = Thread.ofVirtual().factory();
 
+    private Thread runtimeThread;
+
     private final List<Thread> listeningThreads = new ArrayList<>();
 
-    public ServerRuntime(ListeningEngine engine) {
+    public HttpServerImpl(ListeningEngine engine) {
         this.engine = engine;
     }
 
+    @Override
     public synchronized void startServer() {
-        checkSetup();
+        runtimeThread = Thread.ofPlatform()
+                .name("physalus-runtime")
+                .daemon()
+                .start(() -> {
+                    try {
+                        checkSetup();
 
-        this.state = State.STARTING;
+                        this.state = State.STARTING;
 
-        doListening();
+                        enablePorts();
 
-        this.state = State.RUNNING;
+                        this.state = State.RUNNING;
 
-        log.info("Physalus Server started. ports: {}", ports.stream().map(Port::getPortNumber).toList());
+                        log.info("Physalus Server started. ports: {}", ports.stream().map(Port::getPortNumber).toList());
+
+                        doWait(this::stopServer);
+                    } catch (Throwable e) {
+                        stopServer();
+
+                        throw e;
+                    }
+                });
     }
 
     private void checkSetup() {
@@ -75,7 +92,7 @@ public class ServerRuntime implements PortContext, Stated {
         }
     }
 
-    private void doListening() {
+    private void enablePorts() {
         ports.forEach(port -> {
             final Thread thread = factory.newThread(() -> {
                 log.info("Listening on port {}", port.getPortNumber());
@@ -100,6 +117,21 @@ public class ServerRuntime implements PortContext, Stated {
         });
     }
 
+    private void doWait(Runnable onShutdown) {
+        while (true) {
+            try {
+                synchronized (runtimeThread) {
+                    runtimeThread.wait();
+                }
+            } catch (InterruptedException e) {
+                if (this.state == State.ERRORED || this.state == State.STOPPING) {
+                    onShutdown.run();
+                    break;
+                }
+            }
+        }
+    }
+
     public void response(@NotNull HttpSocket socket) {
         assert socket != null;
 
@@ -117,18 +149,36 @@ public class ServerRuntime implements PortContext, Stated {
     }
 
     /**
+     * <p>Join current thread to server's runtime thread.</p>
+     *
+     * <p>The current thread will be blocking after call this method.</p>
+     */
+    @Override
+    public void listening() {
+        try {
+            runtimeThread.join();
+        } catch (InterruptedException e) {
+            stopServer();
+        }
+    }
+
+    /**
      * <p>Stop the server.</p>
      *
      * <p>Before call this function, you must finish all requests(Socket). </p>
      */
+    @Override
     public synchronized void stopServer() {
-        if (this.state != State.RUNNING) {
-            throw new IllegalStateException("Server is not running.");
-        }
+        if (this.state == State.STOPPED) return;
 
+        this.state = State.STOPPING;
+
+        runtimeThread.interrupt();
         listeningThreads.forEach(Thread::interrupt);
 
         ports.forEach(Port::close);
+
+        this.state = State.STOPPED;
     }
 
     @Override

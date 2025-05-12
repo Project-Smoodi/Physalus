@@ -9,7 +9,7 @@ import org.smoodi.physalus.configuration.ConfigurationManager;
 import org.smoodi.physalus.engine.adapter.AdapterContext;
 import org.smoodi.physalus.engine.adapter.PhysalusAdapterManager;
 import org.smoodi.physalus.engine.port.PortContext;
-import org.smoodi.physalus.engine.port.ServerRuntime;
+import org.smoodi.physalus.engine.port.HttpServerImpl;
 import org.smoodi.physalus.transfer.http.HttpExchange;
 import org.smoodi.physalus.transfer.socket.HttpSocket;
 
@@ -24,7 +24,7 @@ public class Physalus
     private static Physalus engine;
 
     @Getter
-    private final ServerRuntime serverRuntime = new ServerRuntime(this);
+    private final HttpServerImpl serverRuntime = new HttpServerImpl(this);
 
     @Getter
     private final AdapterContext adapterManager = new PhysalusAdapterManager();
