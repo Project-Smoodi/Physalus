@@ -7,8 +7,6 @@ import java.net.Socket;
 
 public class HttpSocketWrapper implements HttpSocket {
 
-    private static final String PROTOCOL = "HTTP/1.1";
-
     private final HttpExchange exchange;
 
     private final IOStreamSocket socket;
@@ -37,18 +35,7 @@ public class HttpSocketWrapper implements HttpSocket {
 
     @Override
     public void doResponse() throws SocketShutdownException {
-        var writer = this.socket.getOutput();
-        var response = this.exchange.getResponse();
-
-        response.finalization();
-
-        try {
-            writer.write(ResponseSerializer.serialize(response));
-            writer.flush();
-            writer.close();
-        } catch (IOException e) {
-            throw new SocketShutdownException(e);
-        }
+        ResponseSender.sendResponse(this.exchange.getResponse(), this.socket);
     }
 
     @Override

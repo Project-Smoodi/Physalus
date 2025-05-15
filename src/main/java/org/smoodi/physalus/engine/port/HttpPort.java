@@ -5,6 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.smoodi.annotation.NotNull;
 import org.smoodi.annotation.StaticFactoryMethod;
 import org.smoodi.physalus.transfer.StandardPorts;
+import org.smoodi.physalus.transfer.http.HttpResponse;
+import org.smoodi.physalus.transfer.http.HttpStatus;
+import org.smoodi.physalus.transfer.http.ResponseSender;
 import org.smoodi.physalus.transfer.socket.HttpSocketWrapper;
 import org.smoodi.physalus.transfer.socket.IOStreamSocket;
 import org.smoodi.physalus.transfer.socket.Socket;
@@ -56,8 +59,7 @@ public class HttpPort implements Port {
 
     public Socket accept() {
         while (true) {
-            try {
-                java.net.Socket raw = serverSocket.accept();
+            try (java.net.Socket raw = serverSocket.accept()) {
                 IOStreamSocket socket = new SocketWrapper(raw);
 
                 { // Check it is http request stream or not
@@ -72,14 +74,21 @@ public class HttpPort implements Port {
 
                 try { // Try parsing request
                     return new HttpSocketWrapper(socket);
+                } catch (IllegalArgumentException e) {
+                    sendBadRequest(socket);
                 } catch (Exception e) {
                     log.error("Could not accept socket", e);
-                    raw.close();
                 }
+
             } catch (IOException ignore) {
             }
-            // TODO("Stackoverflow 괜찮나?")
         }
+    }
+
+    private void sendBadRequest(IOStreamSocket socket) {
+        var res = HttpResponse.withAddress(socket.toNative().getRemoteSocketAddress().toString());
+        res.setStatusCode(HttpStatus.BAD_REQUEST);
+        ResponseSender.sendResponse(res, socket);
     }
 
     public void close() {
