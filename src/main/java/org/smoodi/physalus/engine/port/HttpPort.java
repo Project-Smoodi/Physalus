@@ -59,7 +59,8 @@ public class HttpPort implements Port {
 
     public Socket accept() {
         while (true) {
-            try (java.net.Socket raw = serverSocket.accept()) {
+            try {
+                java.net.Socket raw = serverSocket.accept();
                 IOStreamSocket socket = new SocketWrapper(raw);
 
                 { // Check it is http request stream or not
@@ -80,6 +81,7 @@ public class HttpPort implements Port {
                     log.error("Could not accept socket", e);
                 }
 
+                socket.close();
             } catch (IOException ignore) {
             }
         }
