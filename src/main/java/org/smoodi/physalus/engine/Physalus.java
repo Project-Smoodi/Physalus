@@ -46,7 +46,7 @@ public class Physalus
         return adapterManager;
     }
 
-    public static RunningEngine instance() {
+    public static Physalus instance() {
         if (engine == null) {
             engine = new Physalus();
         }
@@ -86,10 +86,9 @@ public class Physalus
     @Override
     public void doService(HttpSocket socket, String tag) {
         threadFactory.newThread(() -> {
-            HttpExchange exchange = null;
             try {
                 // TODO("요청에 대한 처리")
-                exchange = socket.getExchange();
+                HttpExchange exchange = socket.getExchange();
                 mainController(exchange, tag);
 
                 log.debug("Application processing finished. Socket@{}", socket.hashCode());

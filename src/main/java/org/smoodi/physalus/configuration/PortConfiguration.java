@@ -28,7 +28,7 @@ public class PortConfiguration implements SetupConfiguration {
 
     @Override
     public void config() {
-        Physalus engine = (Physalus) Physalus.instance();
+        Physalus engine = Physalus.instance();
 
         ports.forEach((key, value) -> {
             if (value != null) {
