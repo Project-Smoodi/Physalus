@@ -7,7 +7,6 @@ import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.ConsoleAppender;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.slf4j.LoggerFactory;
 
 public final class LoggerConfiguration implements SetupConfiguration {
@@ -39,14 +38,11 @@ public final class LoggerConfiguration implements SetupConfiguration {
     }
 
     @Override
-    public void config() {
-        if (initialized) {
-            return;
-        }
+    public synchronized void config() {
+        if (initialized) return;
+        initialized = true;
 
         configure0();
-
-        initialized = true;
     }
 
     private void configure0() {

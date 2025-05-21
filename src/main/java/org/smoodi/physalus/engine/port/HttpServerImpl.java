@@ -5,11 +5,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.smoodi.annotation.NotNull;
 import org.smoodi.physalus.Tagged;
 import org.smoodi.physalus.engine.HttpServer;
-import org.smoodi.physalus.engine.ListeningEngine;
+import org.smoodi.physalus.engine.Engine;
 import org.smoodi.physalus.status.Stated;
 import org.smoodi.physalus.transfer.socket.HttpSocket;
 import org.smoodi.physalus.transfer.socket.SocketShutdownException;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -32,7 +33,7 @@ public class HttpServerImpl implements PortContext, Stated, HttpServer {
 
     private final Set<Port> ports = new HashSet<>();
 
-    private final ListeningEngine engine;
+    private final Engine engine;
 
     private final ThreadFactory factory = Thread.ofVirtual().factory();
 
@@ -40,7 +41,7 @@ public class HttpServerImpl implements PortContext, Stated, HttpServer {
 
     private final List<Thread> listeningThreads = new ArrayList<>();
 
-    public HttpServerImpl(ListeningEngine engine) {
+    public HttpServerImpl(Engine engine) {
         this.engine = engine;
     }
 
@@ -51,9 +52,9 @@ public class HttpServerImpl implements PortContext, Stated, HttpServer {
                 .daemon()
                 .start(() -> {
                     try {
-                        checkSetup();
-
                         this.state = State.STARTING;
+
+                        checkSetup();
 
                         enablePorts();
 
@@ -154,11 +155,13 @@ public class HttpServerImpl implements PortContext, Stated, HttpServer {
      * <p>The current thread will be blocking after call this method.</p>
      */
     @Override
-    public void listening() {
+    public void listening() throws InterruptedException {
         try {
             runtimeThread.join();
         } catch (InterruptedException e) {
             stopServer();
+
+            throw e;
         }
     }
 
