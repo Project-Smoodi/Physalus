@@ -7,7 +7,7 @@ public class ConfigurationManager implements Configuration {
 
     private static final List<Configuration> configurations = new ArrayList<>();
 
-    private boolean configurated = false;
+    private boolean configured = false;
 
     public static void applyConfiguration(final Configuration configuration) {
         var config = configurations.stream().filter(it -> it.getClass() == configuration.getClass()).findFirst();
@@ -17,9 +17,9 @@ public class ConfigurationManager implements Configuration {
     }
 
     @Override
-    public void config() {
-        if (configurated) return;
-        configurated = true;
+    public synchronized void config() {
+        if (configured) return;
+        configured = true;
 
         configurations.forEach(Configuration::config);
 

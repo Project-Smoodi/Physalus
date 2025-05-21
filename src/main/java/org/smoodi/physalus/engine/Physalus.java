@@ -8,11 +8,12 @@ import org.smoodi.physalus.configuration.Configuration;
 import org.smoodi.physalus.configuration.ConfigurationManager;
 import org.smoodi.physalus.engine.adapter.AdapterContext;
 import org.smoodi.physalus.engine.adapter.PhysalusAdapterManager;
-import org.smoodi.physalus.engine.port.PortContext;
 import org.smoodi.physalus.engine.port.HttpServerImpl;
+import org.smoodi.physalus.engine.port.PortContext;
 import org.smoodi.physalus.transfer.http.HttpExchange;
 import org.smoodi.physalus.transfer.socket.HttpSocket;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.concurrent.ThreadFactory;
 
@@ -33,6 +34,8 @@ public class Physalus
 
     private final Configuration config = new ConfigurationManager();
 
+    private LocalDateTime startTime;
+
     @Override
     protected PortContext portContext() {
         return serverRuntime;
@@ -43,7 +46,7 @@ public class Physalus
         return adapterManager;
     }
 
-    public static Engine instance() {
+    public static Physalus instance() {
         if (engine == null) {
             engine = new Physalus();
         }
@@ -57,23 +60,35 @@ public class Physalus
     public void startEngine() {
         serverRuntime.startServer();
 
-        log.info("Physalus, The engine started. at: {}", LocalDateTime.now());
+        startTime = LocalDateTime.now();
+        log.info("Physalus, The engine started. at: {}", startTime);
     }
 
     @Override
     public void stopEngine() {
         serverRuntime.stopServer();
 
-        log.info("Physalus, The engine stopped. at: {}", LocalDateTime.now());
+        var stoppedAt = LocalDateTime.now();
+        log.info("Physalus, The engine stopped. Total Runtime: {}, at: {}",
+                Duration.between(startTime, stoppedAt).toMillis() / 1000.0f + "s",
+                stoppedAt);
+    }
+
+    @Override
+    public void listening() {
+        try {
+            serverRuntime.listening();
+        } catch (InterruptedException e) {
+            stopEngine();
+        }
     }
 
     @Override
     public void doService(HttpSocket socket, String tag) {
         threadFactory.newThread(() -> {
-            HttpExchange exchange = null;
             try {
                 // TODO("요청에 대한 처리")
-                exchange = socket.getExchange();
+                HttpExchange exchange = socket.getExchange();
                 mainController(exchange, tag);
 
                 log.debug("Application processing finished. Socket@{}", socket.hashCode());
@@ -85,7 +100,7 @@ public class Physalus
         }).start();
     }
 
-    public void mainController(HttpExchange exchange, String tag) {
+    protected void mainController(HttpExchange exchange, String tag) {
 
         // TODO("Filtering...")
 
