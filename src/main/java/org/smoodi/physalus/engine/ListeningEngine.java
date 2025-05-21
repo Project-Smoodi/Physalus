@@ -5,4 +5,6 @@ import org.smoodi.physalus.transfer.socket.HttpSocket;
 public interface ListeningEngine {
 
     void doService(HttpSocket socket, String tag);
+
+    void listening();
 }

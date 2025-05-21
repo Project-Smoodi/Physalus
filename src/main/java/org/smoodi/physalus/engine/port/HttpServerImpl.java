@@ -154,11 +154,13 @@ public class HttpServerImpl implements PortContext, Stated, HttpServer {
      * <p>The current thread will be blocking after call this method.</p>
      */
     @Override
-    public void listening() {
+    public void listening() throws InterruptedException {
         try {
             runtimeThread.join();
         } catch (InterruptedException e) {
             stopServer();
+
+            throw e;
         }
     }
 

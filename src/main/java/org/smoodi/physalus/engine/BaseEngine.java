@@ -7,7 +7,7 @@ import org.smoodi.physalus.engine.port.PortContext;
 import org.smoodi.physalus.status.Stated;
 
 public abstract class BaseEngine
-        implements Engine, ListeningEngine, PortContext, Stated {
+        implements RunningEngine, ListeningEngine, PortContext, Stated {
 
     /**
      * <p>{@link State#NONE}, {@link State#INITIALIZING}, {@link State#STARTING}, {@link State#RUNNING}, {@link State#STOPPING}, {@link State#STOPPED}</p>

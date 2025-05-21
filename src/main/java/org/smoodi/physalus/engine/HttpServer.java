@@ -24,5 +24,5 @@ public interface HttpServer {
      *
      * <p>The current thread will be blocking after call this method.</p>
      */
-    void listening();
+    void listening() throws InterruptedException;
 }
