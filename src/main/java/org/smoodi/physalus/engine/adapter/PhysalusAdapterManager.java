@@ -11,6 +11,7 @@ public class PhysalusAdapterManager implements AdapterContext {
 
     private final Set<Adapter> adapters = new LinkedHashSet<>();
 
+    @Override
     public void execute(@NotNull Exchange exchange, @NotNull String tag) {
         assert exchange != null;
         assert tag != null;
