@@ -16,51 +16,20 @@ public interface Stated {
 
     enum State {
 
-        // Lifecycle
-        NONE,
-        SETTING,
+        SLEEPING,
+
         INITIALIZING,
+        INITIALIZED,
+
         STARTING,
         RUNNING,
+
         STOPPING,
         STOPPED,
-        DEAD,
-        WAITING,
-        SLEEPING,
-        ERRORED,
 
-        // Async
-        SYNCHRONIZING,
-        SPENDING,
-        BUFFERING,
-        CACHING,
+        DESTROYING,
+        DESTROYED,
 
-        // Other
-        ALPHA,
-        BRAVO,
-        CHARLIE,
-        DELTA,
-        ECHO,
-        FOXTROT,
-        GOLF,
-        HOTEL,
-        INDIA,
-        JULIETT,
-        KILO,
-        LIMA,
-        MIKE,
-        NOVEMBER,
-        OSCAR,
-        PAPA,
-        QUEBEC,
-        ROMEO,
-        SIERRA,
-        TANGO,
-        UNIFORM,
-        VICTOR,
-        WHISKY,
-        XRAY,
-        YANKEE,
-        ZULU
+        ERROR
     }
 }

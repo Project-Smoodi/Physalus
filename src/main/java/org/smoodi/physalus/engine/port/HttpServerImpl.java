@@ -4,13 +4,12 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.smoodi.annotation.NotNull;
 import org.smoodi.physalus.Tagged;
-import org.smoodi.physalus.engine.HttpServer;
 import org.smoodi.physalus.engine.Engine;
+import org.smoodi.physalus.engine.HttpServer;
 import org.smoodi.physalus.status.Stated;
 import org.smoodi.physalus.transfer.socket.HttpSocket;
 import org.smoodi.physalus.transfer.socket.SocketShutdownException;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -25,11 +24,8 @@ public class HttpServerImpl implements PortContext, Stated, HttpServer {
             Tagged.StandardTags.HTTPS.value
     );
 
-    /**
-     * <p>{@link State#NONE}, {@link State#SETTING}, {@link State#STARTING}, {@link State#RUNNING}, {@link State#STOPPING}, {@link State#STOPPED}</p>
-     */
     @Getter
-    private State state = State.NONE;
+    private State state = State.SLEEPING;
 
     private final Set<Port> ports = new HashSet<>();
 
@@ -52,9 +48,9 @@ public class HttpServerImpl implements PortContext, Stated, HttpServer {
                 .daemon()
                 .start(() -> {
                     try {
-                        this.state = State.STARTING;
-
                         checkSetup();
+
+                        this.state = State.STARTING;
 
                         enablePorts();
 
@@ -72,7 +68,7 @@ public class HttpServerImpl implements PortContext, Stated, HttpServer {
     }
 
     private void checkSetup() {
-        if (this.state != State.SETTING) {
+        if (this.state != State.INITIALIZING) {
             if (this.state == State.RUNNING) {
                 throw new IllegalStateException("Server is already started.");
             }
@@ -81,11 +77,11 @@ public class HttpServerImpl implements PortContext, Stated, HttpServer {
             }
 
             if (this.ports.isEmpty()) {
-                this.state = State.ERRORED;
+                this.state = State.ERROR;
                 throw new IllegalStateException("No ports available.");
             }
             if (engine == null) {
-                this.state = State.ERRORED;
+                this.state = State.ERROR;
                 throw new IllegalStateException("No engine available.");
             }
 
@@ -125,7 +121,7 @@ public class HttpServerImpl implements PortContext, Stated, HttpServer {
                     runtimeThread.wait();
                 }
             } catch (InterruptedException e) {
-                if (this.state == State.ERRORED || this.state == State.STOPPING) {
+                if (this.state == State.ERROR || this.state == State.STOPPING) {
                     onShutdown.run();
                     break;
                 }
@@ -186,7 +182,7 @@ public class HttpServerImpl implements PortContext, Stated, HttpServer {
 
     @Override
     public boolean addPort(Port port) {
-        setting();
+        setStateInitializing();
         if (ports.stream().anyMatch(port::equals)) {
             return false;
         }
@@ -200,31 +196,31 @@ public class HttpServerImpl implements PortContext, Stated, HttpServer {
 
     @Override
     public boolean addPort(int port) {
-        setting();
+        setStateInitializing();
         return addPort(HttpPort.of(port));
     }
 
     @Override
     public boolean removePort(Port port) {
-        setting();
+        setStateInitializing();
         return ports.removeIf(port::equals);
     }
 
     @Override
     public boolean removePort(int port) {
-        setting();
+        setStateInitializing();
         return ports.removeIf(it -> it.getPortNumber() == port);
     }
 
     @Override
     public boolean removePort(String tag) {
-        setting();
+        setStateInitializing();
         return ports.removeIf(it -> it.getTag().contains(tag));
     }
 
-    private void setting() {
-        if (this.state == State.NONE) {
-            this.state = State.SETTING;
+    private void setStateInitializing() {
+        if (this.state == State.SLEEPING) {
+            this.state = State.INITIALIZING;
         }
     }
 }
