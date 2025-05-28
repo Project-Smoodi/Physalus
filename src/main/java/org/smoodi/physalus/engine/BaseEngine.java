@@ -8,11 +8,8 @@ import org.smoodi.physalus.engine.port.PortContext;
 
 public abstract class BaseEngine implements ServerEngine {
 
-    /**
-     * <p>{@link State#NONE}, {@link State#INITIALIZING}, {@link State#STARTING}, {@link State#RUNNING}, {@link State#STOPPING}, {@link State#STOPPED}</p>
-     */
     @Getter(onMethod_ = @Override)
-    protected State state = State.NONE;
+    protected State state = State.SLEEPING;
 
     protected abstract PortContext portContext();
 
