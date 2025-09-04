@@ -102,7 +102,7 @@ publishing {
     repositories {
         maven {
             name = "staging"
-            url = uri("${layout.buildDirectory}/staging-deploy")
+            url = uri("${layout.buildDirectory.get()}/staging-deploy")
         }
     }
 }
@@ -118,7 +118,7 @@ jreleaser {
                 create("sonatype") {
                     active.set(Active.RELEASE)
                     url.set("https://central.sonatype.com/api/v1/publisher")
-                    stagingRepository("${layout.buildDirectory}/staging-deploy")
+                    stagingRepository("${layout.buildDirectory.get()}/staging-deploy")
                 }
             }
             nexus2 {
