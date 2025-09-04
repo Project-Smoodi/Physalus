@@ -65,6 +65,14 @@ tasks.withType<JavaCompile> {
     )
 }
 
+tasks.named("jreleaserFullRelease") {
+    dependsOn("publish")
+}
+
+tasks.named("jreleaserDeploy") {
+    dependsOn("publish")
+}
+
 publishing {
 
     publications {
@@ -127,7 +135,6 @@ jreleaser {
                     url.set("https://s01.oss.sonatype.org/content/repositories/snapshots/")
                     snapshotUrl.set("https://s01.oss.sonatype.org/content/repositories/snapshots/")
                     applyMavenCentralRules.set(true)
-                    stagingRepository(layout.buildDirectory.dir("staging-deploy").get().asFile.absolutePath)
                 }
             }
         }
