@@ -65,6 +65,16 @@ tasks.withType<JavaCompile> {
     )
 }
 
+tasks.register<Sync>("prepareStaging") {
+    from(tasks.named("publishToMavenLocal"))
+    into(layout.buildDirectory.dir("staging-deploy"))
+}
+
+tasks.named("jreleaserFullRelease") {
+    dependsOn("prepareStaging", "publish")
+}
+
+
 publishing {
 
     publications {
