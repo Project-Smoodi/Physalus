@@ -1,2 +1,2 @@
-rootProject.name = "Smoodi-Physalus"
+rootProject.name = "physalus"
 
