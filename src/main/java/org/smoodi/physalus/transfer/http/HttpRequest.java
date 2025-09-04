@@ -66,10 +66,11 @@ public interface HttpRequest extends Request {
      *
      * <p>Like this:</p>
      * <table>
-     *     <thead>
-     *         <td><b>Content-Type</b></td>
-     *         <td><b>Java Type</b></td>
-     *     </thead>
+     *     <caption>Content-Type and Java Type</caption>
+     *     <tr>
+     *         <th><b>Content-Type</b></th>
+     *         <th><b>Java Type</b></th>
+     *     </tr>
      *     <tr>
      *         <td>application/json</td>
      *         <td>Object</td>
