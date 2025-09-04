@@ -65,16 +65,6 @@ tasks.withType<JavaCompile> {
     )
 }
 
-tasks.register<Sync>("prepareStaging") {
-    from(tasks.named("publishToMavenLocal"))
-    into(layout.buildDirectory.dir("staging-deploy"))
-}
-
-tasks.named("jreleaserFullRelease") {
-    dependsOn("prepareStaging", "publish")
-}
-
-
 publishing {
 
     publications {
@@ -112,7 +102,7 @@ publishing {
     repositories {
         maven {
             name = "staging"
-            url = uri(layout.buildDirectory.get().dir("staging-deploy").toString())
+            url = uri("${layout.buildDirectory}/staging-deploy")
         }
     }
 }
@@ -128,7 +118,7 @@ jreleaser {
                 create("sonatype") {
                     active.set(Active.RELEASE)
                     url.set("https://central.sonatype.com/api/v1/publisher")
-                    stagingRepository(layout.buildDirectory.get().dir("staging-deploy").toString())
+                    stagingRepository("${layout.buildDirectory}/staging-deploy")
                 }
             }
             nexus2 {
@@ -137,6 +127,7 @@ jreleaser {
                     url.set("https://s01.oss.sonatype.org/content/repositories/snapshots/")
                     snapshotUrl.set("https://s01.oss.sonatype.org/content/repositories/snapshots/")
                     applyMavenCentralRules.set(true)
+                    stagingRepository("${layout.buildDirectory}/staging-deploy")
                 }
             }
         }
