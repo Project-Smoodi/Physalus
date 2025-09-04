@@ -45,6 +45,15 @@ tasks.test {
     useJUnitPlatform()
 }
 
+tasks.javadoc {
+    options {
+        (this as StandardJavadocDocletOptions).apply {
+            // Unable warnings of missing documentation
+            addStringOption("Xdoclint:all,-missing", "-quiet")
+        }
+    }
+}
+
 tasks.withType<JavaCompile> {
     options.encoding = "UTF-8"
     options.compilerArgs.addAll(
@@ -54,15 +63,6 @@ tasks.withType<JavaCompile> {
             "--add-exports", "jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED"
         )
     )
-}
-
-tasks.javadoc {
-    options {
-        (this as StandardJavadocDocletOptions).apply {
-            // Unable warnings of missing documentation
-            addStringOption("Xdoclint:all,-missing", "-quiet")
-        }
-    }
 }
 
 publishing {
@@ -102,7 +102,7 @@ publishing {
     repositories {
         maven {
             name = "staging"
-            url = uri("${layout.buildDirectory.get()}/staging-deploy")
+            url = uri(layout.buildDirectory.get().dir("staging-deploy").toString())
         }
     }
 }
@@ -118,7 +118,7 @@ jreleaser {
                 create("sonatype") {
                     active.set(Active.RELEASE)
                     url.set("https://central.sonatype.com/api/v1/publisher")
-                    stagingRepository("${layout.buildDirectory.get()}/staging-deploy")
+                    stagingRepository(layout.buildDirectory.get().dir("staging-deploy").toString())
                 }
             }
             nexus2 {
