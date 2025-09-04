@@ -102,7 +102,7 @@ publishing {
     repositories {
         maven {
             name = "staging"
-            url = uri("${layout.buildDirectory}/staging-deploy")
+            url = uri(layout.buildDirectory.dir("staging-deploy").get().asFile.absolutePath)
         }
     }
 }
@@ -118,7 +118,7 @@ jreleaser {
                 create("sonatype") {
                     active.set(Active.RELEASE)
                     url.set("https://central.sonatype.com/api/v1/publisher")
-                    stagingRepository("${layout.buildDirectory}/staging-deploy")
+                    stagingRepository(layout.buildDirectory.dir("staging-deploy").get().asFile.absolutePath)
                 }
             }
             nexus2 {
@@ -127,7 +127,7 @@ jreleaser {
                     url.set("https://s01.oss.sonatype.org/content/repositories/snapshots/")
                     snapshotUrl.set("https://s01.oss.sonatype.org/content/repositories/snapshots/")
                     applyMavenCentralRules.set(true)
-                    stagingRepository("${layout.buildDirectory}/staging-deploy")
+                    stagingRepository(layout.buildDirectory.dir("staging-deploy").get().asFile.absolutePath)
                 }
             }
         }
